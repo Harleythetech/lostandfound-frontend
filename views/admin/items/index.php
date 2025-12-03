@@ -1,0 +1,148 @@
+<?php $pageTitle = ($itemType === 'lost' ? 'Lost' : 'Found') . ' Items Management - ' . APP_NAME; ?>
+<?php include __DIR__ . '/../../layouts/header-dashboard.php'; ?>
+<?php $user = getCurrentUser(); ?>
+
+<div class="dashboard-wrapper">
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+
+    <main class="dashboard-main">
+        <!-- Top Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="fw-bold mb-0"><?= $itemType === 'lost' ? 'Lost' : 'Found' ?> Items</h5>
+                <small class="text-muted">Manage all <?= $itemType ?> item reports</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                    <i class="bi bi-bell"></i>
+                </a>
+                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
+                    <i class="bi bi-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <?php displayFlash(); ?>
+
+        <!-- Filters -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body py-3">
+                <form method="GET" class="row g-2 align-items-end">
+                    <div class="col-md-2">
+                        <label class="form-label small mb-1">Status</label>
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="">All Statuses</option>
+                            <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
+                            <option value="approved" <?= ($status ?? '') === 'approved' ? 'selected' : '' ?>>Approved</option>
+                            <option value="rejected" <?= ($status ?? '') === 'rejected' ? 'selected' : '' ?>>Rejected</option>
+                            <option value="matched" <?= ($status ?? '') === 'matched' ? 'selected' : '' ?>>Matched</option>
+                            <option value="resolved" <?= ($status ?? '') === 'resolved' ? 'selected' : '' ?>>Resolved</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small mb-1">Category</label>
+                        <select name="category_id" class="form-select form-select-sm">
+                            <option value="">All Categories</option>
+                            <?php foreach ($categories ?? [] as $cat): ?>
+                                <option value="<?= $cat['id'] ?>" <?= ($categoryId ?? '') == $cat['id'] ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cat['name'] ?? '') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label small mb-1">Search</label>
+                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Search items..." value="<?= htmlspecialchars($search ?? '') ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-funnel me-1"></i>Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <?php 
+        // Sort items by ID
+        usort($items, fn($a, $b) => ($a['id'] ?? 0) - ($b['id'] ?? 0));
+        ?>
+
+        <!-- Items Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Item</th>
+                            <th>User</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($items)): ?>
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">No items found</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($items as $item): ?>
+                                <tr>
+                                    <td class="small">#<?= $item['id'] ?></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <?php if (!empty($item['images'][0])): ?>
+                                                <img src="<?= API_BASE_URL ?>/uploads/<?= $item['images'][0]['image_path'] ?? $item['images'][0] ?>" 
+                                                     class="rounded me-2" style="width: 36px; height: 36px; object-fit: cover;">
+                                            <?php else: ?>
+                                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                                    <i class="bi bi-image text-muted small"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div>
+                                                <div class="fw-semibold small"><?= htmlspecialchars($item['title'] ?? $item['item_name'] ?? 'Unknown') ?></div>
+                                                <small class="text-muted"><?= truncate($item['description'] ?? '', 30) ?></small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="small">
+                                        <?= htmlspecialchars(($item['user']['first_name'] ?? '') . ' ' . ($item['user']['last_name'] ?? '')) ?>
+                                        <br><small class="text-muted"><?= $item['user']['school_id'] ?? '' ?></small>
+                                    </td>
+                                    <td class="small"><?= htmlspecialchars($item['category']['name'] ?? 'N/A') ?></td>
+                                    <td><span class="badge <?= getStatusBadgeClass($item['status'] ?? 'pending') ?>"><?= ucfirst($item['status'] ?? 'pending') ?></span></td>
+                                    <td class="small"><?= formatDate($item['created_at'] ?? '', 'M j, Y') ?></td>
+                                    <td>
+                                        <a href="<?= APP_URL ?>/<?= $itemType ?>-items/<?= $item['id'] ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <?php if (!empty($pagination) && ($pagination['totalPages'] ?? 1) > 1): ?>
+            <nav class="mt-4">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <?php for ($i = 1; $i <= $pagination['totalPages']; $i++): ?>
+                        <li class="page-item <?= $i == ($pagination['currentPage'] ?? 1) ? 'active' : '' ?>">
+                            <a class="page-link" href="?page=<?= $i ?>&status=<?= $status ?? '' ?>&category_id=<?= $categoryId ?? '' ?>&search=<?= urlencode($search ?? '') ?>">
+                                <?= $i ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
+        <?php endif; ?>
+    </main>
+</div>
+
+<?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>
