@@ -1,9 +1,9 @@
-<?php $pageTitle = ($item['title'] ?? 'Item Details') . ' - ' . APP_NAME; ?>
-<?php include __DIR__ . '/../layouts/header-dashboard.php'; ?>
+<?php $pageTitle = ($itemType === 'lost' ? 'Lost' : 'Found') . ' Items Management - ' . APP_NAME; ?>
+<?php include __DIR__ . '/../../layouts/header-dashboard.php'; ?>
 <?php $user = getCurrentUser(); ?>
 
 <div class="dashboard-wrapper">
-    <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="dashboard-main">
         <!-- Top Bar -->
@@ -19,7 +19,7 @@
                 </nav>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -74,15 +74,8 @@
             <!-- Item Image -->
             <div class="col-lg-5">
                 <div class="card border-0 shadow-sm">
-                    <?php
-                    $displayImage = '';
-                    if (!empty($item['image'])) {
-                        $displayImage = is_array($item['image']) ? ($item['image']['url'] ?? $item['image']['image_path'] ?? $item['image']['file_name'] ?? '') : $item['image'];
-                        $displayImage = normalizeImageUrl($displayImage);
-                    }
-                    ?>
-                    <?php if (!empty($displayImage)): ?>
-                        <img src="<?= htmlspecialchars($displayImage) ?>" class="card-img-top img-fluid"
+                    <?php if (!empty($item['image'])): ?>
+                        <img src="<?= APP_URL ?>/<?= htmlspecialchars($item['image']) ?>" class="card-img-top img-fluid"
                             alt="<?= htmlspecialchars($item['title']) ?>" style="max-height: 400px; object-fit: cover;">
                     <?php else: ?>
                         <div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;">
@@ -117,7 +110,8 @@
                             <i class="bi bi-file-text text-primary me-2"></i>Description
                         </h6>
                         <p class="card-text mb-0">
-                            <?= nl2br(htmlspecialchars($item['description'] ?? 'No description provided.')) ?></p>
+                            <?= nl2br(htmlspecialchars($item['description'] ?? 'No description provided.')) ?>
+                        </p>
                     </div>
                 </div>
 
@@ -233,4 +227,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../layouts/footer-dashboard.php'; ?>
+<?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>

@@ -13,21 +13,25 @@
                 <small class="text-muted">Manage item categories</small>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                    <i class="bi bi-plus-lg me-1"></i>Add Category
-                </button>
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
-                    <i class="bi bi-moon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                    data-bs-target="#addCategoryModal">
+                    <i class="bi bi-plus-lg me-1"></i>Add Category
                 </button>
             </div>
         </div>
 
         <?php displayFlash(); ?>
 
-        <?php 
+        <?php
         // Sort categories by ID
         usort($categories, fn($a, $b) => ($a['id'] ?? 0) - ($b['id'] ?? 0));
         ?>
@@ -63,16 +67,20 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCategoryModal<?= $cat['id'] ?>">
+                                        <div class="btn-group btn-group-sm gap-1">
+                                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                                                data-bs-target="#editCategoryModal<?= $cat['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/toggle" method="POST" class="d-inline">
+                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/toggle"
+                                                method="POST" class="d-inline" data-no-loading>
                                                 <button type="submit" class="btn btn-outline-warning">
                                                     <i class="bi bi-<?= ($cat['is_active'] ?? true) ? 'pause' : 'play' ?>"></i>
                                                 </button>
                                             </form>
-                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/delete" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/delete"
+                                                method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')"
+                                                data-no-loading>
                                                 <button type="submit" class="btn btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
@@ -85,7 +93,8 @@
                                 <div class="modal fade" id="editCategoryModal<?= $cat['id'] ?>" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/update" method="POST">
+                                            <form action="<?= APP_URL ?>/admin/categories/<?= $cat['id'] ?>/update"
+                                                method="POST">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">Edit Category</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -93,19 +102,24 @@
                                                 <div class="modal-body">
                                                     <div class="mb-3">
                                                         <label class="form-label">Name</label>
-                                                        <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required>
+                                                        <input type="text" class="form-control" name="name"
+                                                            value="<?= htmlspecialchars($cat['name'] ?? '') ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Description</label>
-                                                        <textarea class="form-control" name="description" rows="2"><?= htmlspecialchars($cat['description'] ?? '') ?></textarea>
+                                                        <textarea class="form-control" name="description"
+                                                            rows="2"><?= htmlspecialchars($cat['description'] ?? '') ?></textarea>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Icon (Bootstrap Icons name)</label>
-                                                        <input type="text" class="form-control" name="icon" value="<?= htmlspecialchars($cat['icon'] ?? '') ?>" placeholder="e.g., phone, laptop, wallet">
+                                                        <input type="text" class="form-control" name="icon"
+                                                            value="<?= htmlspecialchars($cat['icon'] ?? '') ?>"
+                                                            placeholder="e.g., phone, laptop, wallet">
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-primary">Update</button>
                                                 </div>
                                             </form>

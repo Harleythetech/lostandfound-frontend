@@ -21,8 +21,8 @@
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="bi bi-moon" id="headerThemeIcon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()" data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>

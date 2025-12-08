@@ -17,23 +17,6 @@ $statusConfig = [
 $currentStatus = $claim['status'] ?? 'pending';
 $statusInfo = $statusConfig[$currentStatus] ?? $statusConfig['pending'];
 
-// Helper function to normalize image URL
-function normalizeImageUrl($imgPath) {
-    if (empty($imgPath)) return '';
-    $imgPath = str_replace('\\', '/', $imgPath);
-    // Remove /api/ prefix if present
-    $imgPath = preg_replace('#^/api/#', '', $imgPath);
-    $imgPath = ltrim($imgPath, '/');
-    // Check if already a full URL
-    if (preg_match('/^https?:\/\//', $imgPath)) {
-        return $imgPath;
-    }
-    // Check if path already starts with 'uploads/' to avoid duplication
-    if (strpos($imgPath, 'uploads/') === 0) {
-        return API_BASE_URL . '/' . $imgPath;
-    }
-    return API_BASE_URL . '/uploads/' . $imgPath;
-}
 
 // Get primary item image from item_images array or fallback to item_primary_image
 $itemImageSrc = '';
@@ -92,8 +75,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                         <div class="row">
                             <div class="col-md-4">
                                 <?php if ($itemImageSrc): ?>
-                                    <a href="<?= $itemImageSrc ?>" target="_blank">
-                                        <img src="<?= $itemImageSrc ?>" class="img-fluid rounded" alt="Item Image">
+                                    <a href="<?= htmlspecialchars($itemImageSrc) ?>" target="_blank">
+                                        <img src="<?= htmlspecialchars($itemImageSrc) ?>" class="img-fluid rounded" alt="Item Image">
                                     </a>
                                 <?php else: ?>
                                     <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
@@ -104,8 +87,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                     <div class="row g-1 mt-2">
                                         <?php foreach (array_slice($itemImages, 1, 3) as $img): ?>
                                             <div class="col-4">
-                                                <a href="<?= normalizeImageUrl($img['url'] ?? '') ?>" target="_blank">
-                                                    <img src="<?= normalizeImageUrl($img['url'] ?? '') ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($img['file_name'] ?? 'Item image') ?>">
+                                                <a href="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>" target="_blank">
+                                                    <img src="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($img['file_name'] ?? 'Item image') ?>">
                                                 </a>
                                             </div>
                                         <?php endforeach; ?>
@@ -162,7 +145,7 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                     <?php if (!empty($claim['item_condition'])): ?>
                                         <span class="badge bg-info"><?= ucfirst($claim['item_condition']) ?> condition</span>
                                     <?php endif; ?>
-                                    <a href="<?= APP_URL ?>/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                    <a href="<?= APP_URL ?>/admin/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
                                         <i class="bi bi-eye me-1"></i>View Full Item
                                     </a>
                                 </div>
@@ -198,8 +181,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                 <?php foreach ($proofImages as $image): ?>
                                     <?php $proofImgUrl = normalizeImageUrl($image['url'] ?? ''); ?>
                                     <div class="col-4 col-md-3">
-                                        <a href="<?= $proofImgUrl ?>" target="_blank" title="<?= htmlspecialchars($image['description'] ?? $image['file_name'] ?? 'Proof image') ?>">
-                                            <img src="<?= $proofImgUrl ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($image['file_name'] ?? 'Proof image') ?>">
+                                        <a href="<?= htmlspecialchars($proofImgUrl) ?>" target="_blank" title="<?= htmlspecialchars($image['description'] ?? $image['file_name'] ?? 'Proof image') ?>">
+                                            <img src="<?= htmlspecialchars($proofImgUrl) ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($image['file_name'] ?? 'Proof image') ?>">
                                         </a>
                                         <?php if (!empty($image['description'])): ?>
                                             <small class="text-muted d-block text-truncate" title="<?= htmlspecialchars($image['description']) ?>">

@@ -20,49 +20,63 @@ body {
     flex-direction: column;
 }
 
-main {
-    flex: 1;
-}
-
-a {
+.report-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
     text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    background: transparent;
+    /* no heavy background */
+    border: 1px solid rgba(16, 24, 40, 0.04);
+    transition: background-color 0.12s ease, transform 0.12s ease;
+    box-shadow: none;
 }
 
-/* ===== NAVBAR STYLES ===== */
-.navbar {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.report-menu-item:hover {
+    transform: translateY(-2px);
+    background-color: rgba(13, 110, 253, 0.03);
 }
 
-.navbar-brand {
-    font-size: 1.4rem;
+.report-menu-item i {
+    font-size: 1.125rem;
 }
 
-/* ===== HERO SECTION ===== */
-.hero-section {
-    background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
-    position: relative;
-    overflow: hidden;
+.bg-custom-blue {
+    background: rgb(76, 108, 167);
 }
 
 
-.hero-icon {
-    font-size: 15rem;
-    opacity: 0.3;
+/* Soft, border-only indicators for lost/found actions */
+.report-menu-item.report-lost {
+    background: transparent;
+    color: #e11d48;
+    /* red text */
+    border-color: rgba(225, 29, 72, 0.12);
 }
 
-/* ===== STATISTICS SECTION ===== */
-.stat-card {
-    padding: 1.5rem;
+.report-menu-item.report-found {
+    background: transparent;
+    color: #059669;
+    /* green text */
+    border-color: rgba(5, 150, 105, 0.12);
 }
 
-.stat-card i {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.stat-card h3 {
-    font-size: 2rem;
-    margin-bottom: 0;
+.report-menu-item.report-lost i,
+.report-menu-item.report-found i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    color: inherit;
+    border: 1px solid rgba(16, 24, 40, 0.04);
 }
 
 /* ===== ITEM CARDS ===== */
@@ -147,6 +161,56 @@ a {
     padding: 2rem;
     position: relative;
     color: white;
+}
+
+/* Top-left controls inside the brand panel (Back + Theme) */
+.auth-brand-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    transform: none;
+    z-index: 30;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Subtle filled buttons for Back + Theme in the brand panel */
+.auth-brand-top .btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    padding: 0.4rem 0.6rem;
+    min-width: 42px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-brand-top .btn i {
+    margin-right: 6px;
+}
+
+.auth-brand-top .btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Slightly different tones when in dark-mode (if body toggles) */
+body.dark-mode .auth-brand-top .btn {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 991.98px) {
+    .auth-brand-top {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-bottom: 0.75rem;
+        justify-content: flex-start;
+    }
 }
 
 .auth-brand-content {
@@ -1102,15 +1166,9 @@ body.dashboard-body {
     font-size: 1.125rem;
 }
 
-.report-menu-item.report-lost {
-    background: #dc3545;
-    color: #fff;
-}
 
-.report-menu-item.report-found {
-    background: #198754;
-    color: #fff;
-}
+
+
 
 /* Report Overlay */
 .report-overlay {
@@ -1842,8 +1900,10 @@ body.dark-mode .mobile-bottom-nav .nav-item:hover {
     color: #60a5fa !important;
 }
 
+
 /* Report menu */
 body.dark-mode .report-menu-item {
+    background: #374151;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
@@ -2510,11 +2570,6 @@ body.dark-mode .report-fab {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-body.dark-mode .report-menu {
-    background: #1f2937;
-    border-color: #374151;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
-}
 
 body.dark-mode .report-menu-item {
     color: #e5e7eb;
@@ -2534,4 +2589,159 @@ body.dark-mode .report-menu-item {
         border: 1px solid #dee2e6 !important;
         box-shadow: none !important;
     }
+}
+
+/* Mobile: top row layout for brand panel: Back | DarkMode | (spacer) | Branding */
+@media (max-width: 767.98px) {
+    .auth-brand-side {
+        padding: 1rem;
+        justify-content: flex-start;
+    }
+
+    .auth-brand-top {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    /* Place branding on the right edge and vertically center it */
+    .auth-brand-content {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: right;
+    }
+
+    .auth-brand-logo {
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .auth-brand-logo i {
+        font-size: 1.6rem;
+    }
+
+    .auth-brand-logo span {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+
+    /* hide tagline on very small screens to keep the top row clean */
+    .auth-brand-tagline {
+        display: none;
+    }
+
+    /* ensure buttons remain visible and compact */
+    .auth-brand-top .btn {
+        padding: 0.35rem 0.5rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Image preview remove button and preview utilities */
+.image-remove-btn {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    z-index: 1200 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background: rgba(220, 53, 69, 0.95) !important;
+    color: #fff !important;
+    border: none !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25) !important;
+    font-size: 0.9rem !important;
+}
+
+.image-remove-btn:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.6) !important;
+    outline-offset: 2px !important;
+}
+
+.image-remove-btn i {
+    pointer-events: none;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+#imagePreview .col-6 {
+    padding: 4px;
+}
+
+#imagePreview .position-relative {
+    overflow: visible;
+    position: relative;
+}
+
+/* Thank you / confirmation banner used on report pages */
+.thank-you-banner {
+    background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%);
+    border: 0;
+    color: #0f5132;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.thank-you-banner .icon {
+    background: rgba(16, 185, 129, 0.12);
+    color: #198754;
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 1.25rem;
+}
+
+.thank-you-banner .content strong {
+    display: block;
+    font-weight: 700;
+}
+
+.thank-you-banner .content p {
+    margin: 0;
+    color: rgba(15, 81, 50, 0.85);
+    font-size: 0.95rem;
+}
+
+/* Image preview toast styling (light/dark) */
+.image-preview-toast {
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 8px;
+}
+
+body.dark-mode .image-preview-toast {
+    background: #1f2937 !important;
+    color: #e5e7eb !important;
+}
+
+.image-preview-toast .btn-undo {
+    color: #0f172a;
+}
+
+body.dark-mode .image-preview-toast .btn-undo {
+    color: #e5e7eb;
 }

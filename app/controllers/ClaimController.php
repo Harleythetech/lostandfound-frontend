@@ -9,12 +9,20 @@ class ClaimController {
         
         $page = $_GET['page'] ?? 1;
         $status = $_GET['status'] ?? '';
+        $itemId = $_GET['item_id'] ?? '';
+        $foundItemId = $_GET['found_item_id'] ?? '';
         
-        $queryParams = ["page={$page}"];
+        $queryParams = ["page={$page}", "limit=20"];
         if ($status) $queryParams[] = "status=" . urlencode($status);
+        if ($foundItemId) {
+            $queryParams[] = "found_item_id=" . urlencode($foundItemId);
+        } elseif ($itemId) {
+            $queryParams[] = "item_id=" . urlencode($itemId);
+        }
         
         $response = apiRequest('/claims?' . implode('&', $queryParams), 'GET', null, getToken());
-        $claims = $response['data'] ?? [];
+        $claims = $response['data']['data'] ?? $response['data'] ?? [];
+        $pagination = $response['data']['pagination'] ?? null;
         
         include __DIR__ . '/../../views/claims/index.php';
     }

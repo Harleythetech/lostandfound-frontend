@@ -11,7 +11,7 @@ foreach ($dailyStats as $stat) {
     $date = $stat['date'] ?? '';
     $type = $stat['type'] ?? '';
     $count = $stat['count'] ?? 0;
-    
+
     if (!isset($processedData[$date])) {
         $processedData[$date] = [
             'date' => $date,
@@ -21,7 +21,7 @@ foreach ($dailyStats as $stat) {
             'matches' => 0
         ];
     }
-    
+
     if ($type === 'lost') {
         $processedData[$date]['lost'] = $count;
     } elseif ($type === 'found') {
@@ -50,7 +50,8 @@ $days = $data['period_days'] ?? $_GET['days'] ?? 30;
             <div>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 small">
-                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin/reports" class="text-decoration-none">Reports</a></li>
+                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin/reports"
+                                class="text-decoration-none">Reports</a></li>
                         <li class="breadcrumb-item active">Trends</li>
                     </ol>
                 </nav>
@@ -63,7 +64,7 @@ $days = $data['period_days'] ?? $_GET['days'] ?? 30;
                         <option value="90" <?= $days == 90 ? 'selected' : '' ?>>Last 90 days</option>
                     </select>
                 </form>
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn btn-outline-secondary btn-sm position-relative">
                     <i class="bi bi-bell"></i>
                 </a>
                 <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
@@ -74,26 +75,41 @@ $days = $data['period_days'] ?? $_GET['days'] ?? 30;
 
         <h5 class="fw-bold mb-4">Reporting Trends</h5>
 
-        <!-- Resolution Summary -->
-        <?php if (!empty($resolutionSummary)): ?>
         <div class="row g-3 mb-4">
-            <div class="col-md-6">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center py-3">
-                        <div class="fs-3 fw-bold text-success"><?= $resolutionSummary['resolved'] ?? 0 ?></div>
-                        <small class="text-muted">Items Resolved</small>
+            <div class="col-12">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div id="chartTrendsLost" style="min-height:260px;"></div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center py-3">
-                        <div class="fs-3 fw-bold text-primary"><?= $resolutionSummary['claims_approved'] ?? 0 ?></div>
-                        <small class="text-muted">Claims Approved</small>
+                    <div class="card-body">
+                        <div id="chartTrendsFound" style="min-height:260px;"></div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Resolution Summary -->
+        <?php if (!empty($resolutionSummary)): ?>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="fs-3 fw-bold text-success"><?= $resolutionSummary['resolved'] ?? 0 ?></div>
+                            <small class="text-muted">Items Resolved</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-3">
+                            <div class="fs-3 fw-bold text-primary"><?= $resolutionSummary['claims_approved'] ?? 0 ?></div>
+                            <small class="text-muted">Claims Approved</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <?php endif; ?>
 
         <div class="card border-0 shadow-sm">
@@ -115,7 +131,8 @@ $days = $data['period_days'] ?? $_GET['days'] ?? 30;
                             <tbody>
                                 <?php foreach ($processedData as $row): ?>
                                     <tr>
-                                        <td class="small"><?= !empty($row['date']) ? date('M j, Y', strtotime($row['date'])) : 'N/A' ?></td>
+                                        <td class="small">
+                                            <?= !empty($row['date']) ? date('M j, Y', strtotime($row['date'])) : 'N/A' ?></td>
                                         <td class="text-center"><?= $row['lost'] ?></td>
                                         <td class="text-center"><?= $row['found'] ?></td>
                                         <td class="text-center"><?= $row['claims'] ?></td>
@@ -130,5 +147,14 @@ $days = $data['period_days'] ?? $_GET['days'] ?? 30;
         </div>
     </main>
 </div>
+
+<script type="module">
+    import { renderLineChart } from '<?= APP_URL ?>/assets/js/admin-reports.js';
+    const processed = <?= json_encode(array_values($processedData)); ?>;
+    const lostSeries = processed.map(r => ({ date: r.date, value: r.lost || 0 }));
+    const foundSeries = processed.map(r => ({ date: r.date, value: r.found || 0 }));
+    renderLineChart('#chartTrendsLost', lostSeries, { color: '#dc3545' });
+    renderLineChart('#chartTrendsFound', foundSeries, { color: '#0d6efd' });
+</script>
 
 <?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>

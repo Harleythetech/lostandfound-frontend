@@ -23,7 +23,7 @@
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()"><i class="bi bi-moon"></i></button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()" data-theme-toggle="true"><i class="bi bi-moon"></i></button>
             </div>
         </div>
 
@@ -181,7 +181,7 @@
                                         ?>
                                         <?php if (!empty($imageUrl)): ?>
                                         <div class="col-3 col-md-2">
-                                            <img src="<?= API_BASE_URL ?>/<?= htmlspecialchars($imageUrl) ?>" class="img-thumbnail" style="width: 100%; height: 80px; object-fit: cover;">
+                                            <img src="<?= htmlspecialchars(normalizeImageUrl($imageUrl)) ?>" class="img-thumbnail" style="width: 100%; height: 80px; object-fit: cover;">
                                         </div>
                                         <?php endif; ?>
                                         <?php endforeach; ?>

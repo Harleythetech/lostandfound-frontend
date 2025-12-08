@@ -13,14 +13,17 @@
                 <small class="text-muted">Manage campus locations</small>
             </div>
             <div class="d-flex align-items-center gap-2">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                                    title="Notifications">
+                                    <i class="bi bi-bell"></i>
+                                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
+                                </a>
+                                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()" data-theme-toggle="true"
+                                    title="Toggle Dark Mode">
+                                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
+                                </button>
                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addLocationModal">
                     <i class="bi bi-plus-lg me-1"></i>Add Location
-                </button>
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
-                    <i class="bi bi-bell"></i>
-                </a>
-                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
-                    <i class="bi bi-moon"></i>
                 </button>
             </div>
         </div>
@@ -78,7 +81,7 @@
                                             </button>
 
                                             <form action="<?= APP_URL ?>/admin/locations/<?= $loc['id'] ?>/delete" method="POST" 
-                                                  onsubmit="return confirm('Are you sure you want to delete this location?')">
+                                                  onsubmit="return confirm('Are you sure you want to delete this location?')" data-no-loading>
                                                 <button type="submit" class="btn btn-sm btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </button>

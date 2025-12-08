@@ -12,11 +12,14 @@
                 <small class="text-muted">Review and process item claims</small>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()">
-                    <i class="bi bi-moon" id="headerThemeIcon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
@@ -28,27 +31,32 @@
             <div class="card-body py-2">
                 <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
-                        <a class="nav-link <?= ($status ?? 'all') === 'all' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/claims?status=all">
+                        <a class="nav-link <?= ($status ?? 'all') === 'all' ? 'active' : '' ?>"
+                            href="<?= APP_URL ?>/admin/claims?status=all">
                             <i class="bi bi-list me-1"></i>All
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($status ?? '') === 'pending' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/claims?status=pending">
+                        <a class="nav-link <?= ($status ?? '') === 'pending' ? 'active' : '' ?>"
+                            href="<?= APP_URL ?>/admin/claims?status=pending">
                             <i class="bi bi-hourglass-split me-1"></i>Pending
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($status ?? '') === 'approved' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/claims?status=approved">
+                        <a class="nav-link <?= ($status ?? '') === 'approved' ? 'active' : '' ?>"
+                            href="<?= APP_URL ?>/admin/claims?status=approved">
                             <i class="bi bi-check-circle me-1"></i>Approved
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($status ?? '') === 'completed' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/claims?status=completed">
+                        <a class="nav-link <?= ($status ?? '') === 'completed' ? 'active' : '' ?>"
+                            href="<?= APP_URL ?>/admin/claims?status=completed">
                             <i class="bi bi-check2-all me-1"></i>Completed
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($status ?? '') === 'rejected' ? 'active' : '' ?>" href="<?= APP_URL ?>/admin/claims?status=rejected">
+                        <a class="nav-link <?= ($status ?? '') === 'rejected' ? 'active' : '' ?>"
+                            href="<?= APP_URL ?>/admin/claims?status=rejected">
                             <i class="bi bi-x-circle me-1"></i>Rejected
                         </a>
                     </li>
@@ -84,54 +92,47 @@
                             </tr>
                         <?php else: ?>
                             <?php foreach ($claims as $claim): ?>
-                                <?php 
-                                    // Get image URL from item_images array or fallback to item_primary_image
-                                    $imageSrc = '';
-                                    $itemImages = $claim['item_images'] ?? [];
-                                    if (!empty($itemImages)) {
-                                        // Find primary image or use first one
-                                        $primaryImage = null;
-                                        foreach ($itemImages as $img) {
-                                            if (isset($img['is_primary']) && ($img['is_primary'] === true || $img['is_primary'] === 1 || $img['is_primary'] === '1')) {
-                                                $primaryImage = $img;
-                                                break;
-                                            }
-                                        }
-                                        $primaryImage = $primaryImage ?? $itemImages[0] ?? null;
-                                        $imgPath = $primaryImage ? ($primaryImage['url'] ?? $primaryImage['file_name'] ?? '') : '';
-                                    } else {
-                                        $imgPath = $claim['item_primary_image'] ?? '';
-                                    }
-                                    
-                                    if (!empty($imgPath)) {
-                                        $imgPath = str_replace('\\', '/', $imgPath);
-                                        $imgPath = preg_replace('#^/api/#', '', $imgPath);
-                                        $imgPath = ltrim($imgPath, '/');
-                                        if (preg_match('/^https?:\/\//', $imgPath)) {
-                                            $imageSrc = $imgPath;
-                                        } elseif (strpos($imgPath, 'uploads/') === 0) {
-                                            // Path already contains uploads/, don't add it again
-                                            $imageSrc = API_BASE_URL . '/' . $imgPath;
-                                        } else {
-                                            $imageSrc = API_BASE_URL . '/uploads/' . $imgPath;
+                                <?php
+                                // Get image URL from item_images array or fallback to item_primary_image
+                                $imageSrc = '';
+                                $itemImages = $claim['item_images'] ?? [];
+                                if (!empty($itemImages)) {
+                                    // Find primary image or use first one
+                                    $primaryImage = null;
+                                    foreach ($itemImages as $img) {
+                                        if (isset($img['is_primary']) && ($img['is_primary'] === true || $img['is_primary'] === 1 || $img['is_primary'] === '1')) {
+                                            $primaryImage = $img;
+                                            break;
                                         }
                                     }
+                                    $primaryImage = $primaryImage ?? $itemImages[0] ?? null;
+                                    $imgPath = $primaryImage ? ($primaryImage['url'] ?? $primaryImage['file_name'] ?? '') : '';
+                                } else {
+                                    $imgPath = $claim['item_primary_image'] ?? '';
+                                }
+
+                                if (!empty($imgPath)) {
+                                    $imageSrc = normalizeImageUrl($imgPath);
+                                }
                                 ?>
                                 <tr>
                                     <td class="small text-muted">#<?= $claim['id'] ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <?php if ($imageSrc): ?>
-                                                <img src="<?= $imageSrc ?>" 
-                                                     class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                                <img src="<?= htmlspecialchars($imageSrc) ?>" class="rounded me-2"
+                                                    style="width: 40px; height: 40px; object-fit: cover;">
                                             <?php else: ?>
-                                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
                                                     <i class="bi bi-image text-muted"></i>
                                                 </div>
                                             <?php endif; ?>
                                             <div>
-                                                <div class="fw-semibold small"><?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?></div>
-                                                <small class="text-muted">ID: #<?= $claim['item_id'] ?? $claim['found_item_id'] ?? 'N/A' ?></small>
+                                                <div class="fw-semibold small">
+                                                    <?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?></div>
+                                                <small class="text-muted">ID:
+                                                    #<?= $claim['item_id'] ?? $claim['found_item_id'] ?? 'N/A' ?></small>
                                             </div>
                                         </div>
                                     </td>
@@ -149,14 +150,14 @@
                                     </td>
                                     <td>
                                         <?php
-                                            $statusClasses = [
-                                                'pending' => 'bg-warning text-dark',
-                                                'approved' => 'bg-success',
-                                                'rejected' => 'bg-danger',
-                                                'completed' => 'bg-primary',
-                                                'cancelled' => 'bg-secondary'
-                                            ];
-                                            $statusClass = $statusClasses[$claim['status'] ?? 'pending'] ?? 'bg-secondary';
+                                        $statusClasses = [
+                                            'pending' => 'bg-warning text-dark',
+                                            'approved' => 'bg-success',
+                                            'rejected' => 'bg-danger',
+                                            'completed' => 'bg-primary',
+                                            'cancelled' => 'bg-secondary'
+                                        ];
+                                        $statusClass = $statusClasses[$claim['status'] ?? 'pending'] ?? 'bg-secondary';
                                         ?>
                                         <span class="badge <?= $statusClass ?>">
                                             <?= ucfirst($claim['status'] ?? 'pending') ?>
@@ -179,11 +180,13 @@
                                     <td class="small text-muted">
                                         <?= formatDate($claim['created_at'] ?? '', 'M j, Y') ?>
                                         <?php if (!empty($claim['found_date'])): ?>
-                                            <br><small class="text-muted">Found: <?= formatDate($claim['found_date'], 'M j') ?></small>
+                                            <br><small class="text-muted">Found:
+                                                <?= formatDate($claim['found_date'], 'M j') ?></small>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <a href="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>" class="btn btn-sm btn-primary">
+                                        <a href="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>"
+                                            class="btn btn-sm btn-primary">
                                             <i class="bi bi-eye me-1"></i>View
                                         </a>
                                     </td>

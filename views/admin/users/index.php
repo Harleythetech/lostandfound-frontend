@@ -13,11 +13,14 @@
                 <small class="text-muted">Manage all registered users</small>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
-                    <i class="bi bi-moon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
@@ -34,8 +37,10 @@
                             <option value="">All Statuses</option>
                             <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
                             <option value="active" <?= ($status ?? '') === 'active' ? 'selected' : '' ?>>Active</option>
-                            <option value="suspended" <?= ($status ?? '') === 'suspended' ? 'selected' : '' ?>>Suspended</option>
-                            <option value="declined" <?= ($status ?? '') === 'declined' ? 'selected' : '' ?>>Declined</option>
+                            <option value="suspended" <?= ($status ?? '') === 'suspended' ? 'selected' : '' ?>>Suspended
+                            </option>
+                            <option value="declined" <?= ($status ?? '') === 'declined' ? 'selected' : '' ?>>Declined
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -43,13 +48,15 @@
                         <select name="role" class="form-select form-select-sm">
                             <option value="">All Roles</option>
                             <option value="user" <?= ($role ?? '') === 'user' ? 'selected' : '' ?>>User</option>
-                            <option value="security" <?= ($role ?? '') === 'security' ? 'selected' : '' ?>>Security</option>
+                            <option value="security" <?= ($role ?? '') === 'security' ? 'selected' : '' ?>>Security
+                            </option>
                             <option value="admin" <?= ($role ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label small mb-1">Search</label>
-                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Search name or school ID..." value="<?= htmlspecialchars($search ?? '') ?>">
+                        <input type="text" name="search" class="form-control form-control-sm"
+                            placeholder="Search name or school ID..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary btn-sm w-100">
@@ -60,7 +67,7 @@
             </div>
         </div>
 
-        <?php 
+        <?php
         // Sort users by ID
         usort($users, fn($a, $b) => ($a['id'] ?? 0) - ($b['id'] ?? 0));
         ?>
@@ -91,24 +98,28 @@
                                     <td class="small">#<?= $u['id'] ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                style="width: 32px; height: 32px; font-size: 0.75rem;">
                                                 <?= strtoupper(substr($u['first_name'] ?? 'U', 0, 1)) ?>
                                             </div>
                                             <div>
-                                                <div class="fw-semibold small"><?= htmlspecialchars(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? '')) ?></div>
+                                                <div class="fw-semibold small">
+                                                    <?= htmlspecialchars(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? '')) ?>
+                                                </div>
                                                 <small class="text-muted"><?= htmlspecialchars($u['email'] ?? '') ?></small>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="small"><?= htmlspecialchars($u['school_id'] ?? '') ?></td>
                                     <td>
-                                        <span class="badge bg-<?= ($u['role'] ?? 'user') === 'admin' ? 'danger' : (($u['role'] ?? 'user') === 'security' ? 'warning' : 'secondary') ?>">
+                                        <span
+                                            class="badge bg-<?= ($u['role'] ?? 'user') === 'admin' ? 'danger' : (($u['role'] ?? 'user') === 'security' ? 'warning' : 'secondary') ?>">
                                             <?= ucfirst($u['role'] ?? 'user') ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <?php 
-                                        $statusClass = match($u['status'] ?? 'pending') {
+                                        <?php
+                                        $statusClass = match ($u['status'] ?? 'pending') {
                                             'active' => 'bg-success',
                                             'pending' => 'bg-warning text-dark',
                                             'suspended' => 'bg-danger',
@@ -122,7 +133,8 @@
                                     </td>
                                     <td class="small"><?= formatDate($u['created_at'] ?? '', 'M j, Y') ?></td>
                                     <td>
-                                        <a href="<?= APP_URL ?>/admin/users/<?= $u['id'] ?>" class="btn btn-sm btn-outline-primary">
+                                        <a href="<?= APP_URL ?>/admin/users/<?= $u['id'] ?>"
+                                            class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     </td>
@@ -140,7 +152,8 @@
                 <ul class="pagination pagination-sm justify-content-center">
                     <?php for ($i = 1; $i <= $pagination['totalPages']; $i++): ?>
                         <li class="page-item <?= $i == ($pagination['currentPage'] ?? 1) ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>&status=<?= $status ?? '' ?>&role=<?= $role ?? '' ?>&search=<?= urlencode($search ?? '') ?>">
+                            <a class="page-link"
+                                href="?page=<?= $i ?>&status=<?= $status ?? '' ?>&role=<?= $role ?? '' ?>&search=<?= urlencode($search ?? '') ?>">
                                 <?= $i ?>
                             </a>
                         </li>

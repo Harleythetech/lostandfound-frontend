@@ -100,6 +100,8 @@ $router->get('/search/found', [new SearchController(), 'found']);
 $router->get('/admin', [new AdminController(), 'dashboard']);
 $router->get('/admin/dashboard', [new AdminController(), 'dashboard']);
 $router->get('/admin/pending', [new AdminController(), 'pending']);
+// Admin profile
+$router->get('/admin/profile', [new AdminController(), 'profile']);
 
 // Admin - Users
 $router->get('/admin/users', [new AdminController(), 'users']);
@@ -112,6 +114,8 @@ $router->get('/admin/lost-items', [new AdminController(), 'lostItems']);
 $router->get('/admin/found-items', [new AdminController(), 'foundItems']);
 $router->post('/admin/lost-items/{id}/review', [new AdminController(), 'reviewLostItem']);
 $router->post('/admin/found-items/{id}/review', [new AdminController(), 'reviewFoundItem']);
+$router->get('/admin/found-items/{id}', [new AdminController(), 'showFoundItem']);
+$router->get('/admin/lost-items/{id}', [new AdminController(), 'showLostItem']);
 
 // Admin - Claims
 $router->get('/admin/claims', [new AdminController(), 'claims']);
@@ -129,6 +133,8 @@ $router->get('/admin/reports/trends', [new AdminController(), 'reportsTrends']);
 
 // Admin - Activity Logs
 $router->get('/admin/activity', [new AdminController(), 'activityLogs']);
+// Admin - Notifications
+$router->get('/admin/notifications', [new AdminController(), 'notifications']);
 
 // Admin - Categories
 $router->get('/admin/categories', [new AdminController(), 'categories']);

@@ -4,16 +4,46 @@ document.addEventListener("DOMContentLoaded", function () {
   // ===== PASSWORD TOGGLE =====
   const togglePasswordBtns = document.querySelectorAll(".toggle-password");
   togglePasswordBtns.forEach((btn) => {
-    btn.addEventListener("click", function () {
-      const input = this.closest(".input-group").querySelector("input");
-      const icon = this.querySelector("i");
+    btn.addEventListener("click", function (e) {
+      e.preventDefault(); // Prevent any form submission
+      e.stopPropagation(); // Prevent event bubbling
 
+      // Find associated input via several fallbacks
+      const inputGroup = this.closest(".input-group");
+      let input = null;
+
+      if (inputGroup) {
+        // Find password or text input in the input group
+        input = inputGroup.querySelector(
+          'input[type="password"], input[type="text"]'
+        );
+      }
+
+      // Fallbacks if not in input-group
+      if (!input) {
+        input = this.previousElementSibling;
+      }
+      if (!input || (input.type !== "password" && input.type !== "text")) {
+        input = this.closest("div")?.querySelector(
+          'input[type="password"], input[type="text"]'
+        );
+      }
+      if (!input) {
+        const targetId =
+          this.dataset.target || this.getAttribute("data-target");
+        if (targetId) input = document.getElementById(targetId);
+      }
+
+      const icon = this.querySelector("i");
+      if (!input || !icon) return;
+
+      // Toggle password visibility
       if (input.type === "password") {
-        input.type = "text";
+        input.setAttribute("type", "text");
         icon.classList.remove("bi-eye");
         icon.classList.add("bi-eye-slash");
       } else {
-        input.type = "password";
+        input.setAttribute("type", "password");
         icon.classList.remove("bi-eye-slash");
         icon.classList.add("bi-eye");
       }
@@ -46,6 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
     'input[type="file"][accept*="image"]'
   );
   imageInputs.forEach((input) => {
+    // Skip inputs that opt-out of the global preview handler (use custom preview instead)
+    if (input.hasAttribute("data-no-default-preview")) return;
+
     input.addEventListener("change", function (e) {
       const preview = document.getElementById("imagePreview");
       if (!preview) return;
@@ -134,6 +167,73 @@ document.addEventListener("DOMContentLoaded", function () {
       link.classList.add("active");
     }
   });
+
+  // ===== GLOBAL DARK MODE HANDLER =====
+  function setThemeIcon(isDark) {
+    // Toggle icons by id or class; handle duplicates (may exist in some pages)
+    const idIcons = document.querySelectorAll(
+      "#navThemeIcon, #headerThemeIcon, .header-theme-icon, .nav-theme-icon"
+    );
+    idIcons.forEach((icon) => {
+      if (!icon) return;
+      icon.classList.toggle("bi-moon", !isDark);
+      icon.classList.toggle("bi-sun", isDark);
+    });
+
+    // Toggle icons for inline toggle buttons, standard buttons and any .theme-toggle
+    document
+      .querySelectorAll(
+        '[onclick*="toggleDarkMode"], #darkModeToggle, .auth-theme-toggle, .theme-toggle'
+      )
+      .forEach((btn) => {
+        const icon = btn.querySelector("i.bi");
+        if (!icon) return;
+        icon.classList.toggle("bi-moon", !isDark);
+        icon.classList.toggle("bi-sun", isDark);
+      });
+  }
+
+  function toggleDarkMode(e) {
+    const isDark = document.body.classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", isDark ? "true" : "false");
+    setThemeIcon(isDark);
+  }
+  // Expose globally so inline onclick handlers can still work
+  window.toggleDarkMode = toggleDarkMode;
+
+  // Attach to dark mode buttons
+  document
+    .querySelectorAll(
+      '#darkModeToggle, .auth-theme-toggle, .ui-btn-secondary[onclick*="toggleDarkMode"], [onclick*="toggleDarkMode"], .theme-toggle'
+    )
+    .forEach((el) => {
+      if (!el) return;
+      const onclickAttr = el.getAttribute && el.getAttribute("onclick");
+      if (onclickAttr && onclickAttr.includes("toggleDarkMode")) return; // let inline onclick handle this
+      el.addEventListener("click", toggleDarkMode);
+    });
+
+  // Delegated event listener in case elements are dynamically loaded (admin tabs, AJAX)
+  document.body.addEventListener("click", function (e) {
+    const toggleEl = e.target.closest(
+      '[onclick*="toggleDarkMode"], [data-theme-toggle], .auth-theme-toggle, .theme-toggle'
+    );
+    if (toggleEl) {
+      // If the element already has an inline onclick that calls toggleDarkMode, skip delegation
+      const onclickAttr =
+        toggleEl.getAttribute && toggleEl.getAttribute("onclick");
+      if (onclickAttr && onclickAttr.includes("toggleDarkMode")) return;
+      toggleDarkMode(e);
+    }
+  });
+
+  // Initialize theme state
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark-mode");
+    setThemeIcon(true);
+  } else {
+    setThemeIcon(false);
+  }
 
   // ===== LOADING STATE FOR FORMS =====
   const submitForms = document.querySelectorAll("form:not([data-no-loading])");

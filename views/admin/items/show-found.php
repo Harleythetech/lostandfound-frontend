@@ -1,9 +1,8 @@
-<?php $pageTitle = htmlspecialchars($item['title'] ?? $item['item_name']) . ' - ' . APP_NAME; ?>
-<?php include __DIR__ . '/../layouts/header-dashboard.php'; ?>
+<?php include __DIR__ . '/../../layouts/header-dashboard.php'; ?>
 <?php $user = getCurrentUser(); ?>
 
 <div class="dashboard-wrapper">
-    <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
+    <?php include __DIR__ . '/../partials/sidebar.php'; ?>
 
     <main class="dashboard-main">
         <!-- Top Bar -->
@@ -11,24 +10,20 @@
             <div>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/dashboard">Home</a></li>
-                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/found-items">Found Items</a></li>
+                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin">Home</a></li>
+                        <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin/found-items">Found Items</a></li>
                         <li class="breadcrumb-item active text-truncate" style="max-width: 200px;">
-                            <?= htmlspecialchars($item['title'] ?? '') ?>
-                        </li>
+                            <?= htmlspecialchars($item['title'] ?? '') ?></li>
                     </ol>
                 </nav>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
-                    title="Notifications">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn btn-outline-secondary btn-sm position-relative">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
-                    data-theme-toggle="true" title="Toggle Dark Mode">
-                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
-                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true"><i id="headerThemeIcon" class="bi bi-moon header-theme-icon"></i></button>
             </div>
         </div>
 
@@ -149,34 +144,16 @@
                         <!-- Actions -->
                         <div class="d-grid gap-2">
                             <?php if (isLoggedIn()): ?>
-                                <?php if (getCurrentUser()['id'] === ($item['user_id'] ?? null)): ?>
-                                    <a href="<?= APP_URL ?>/found-items/<?= $item['id'] ?>/edit" class="btn btn-primary btn-sm">
+                                <?php if (isAdmin()): ?>
+                                    <a href="<?= APP_URL ?>/admin/found-items/<?= $item['id'] ?>"
+                                        class="btn btn-primary btn-sm">
                                         <i class="bi bi-pencil me-2"></i>Edit Item
-                                    </a>
-                                    <a href="<?= APP_URL ?>/claims?item_id=<?= $item['id'] ?>"
-                                        class="btn btn-outline-info btn-sm">
-                                        <i class="bi bi-hand-index me-2"></i>View Claims (<?= $item['claims_count'] ?? 0 ?>)
                                     </a>
                                     <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#deleteModal">
                                         <i class="bi bi-trash me-2"></i>Delete Item
                                     </button>
-                                <?php else: ?>
-                                    <?php if (($item['status'] ?? '') === 'approved'): ?>
-                                        <a href="<?= APP_URL ?>/claims/create?found_item_id=<?= $item['id'] ?>"
-                                            class="btn btn-warning">
-                                            <i class="bi bi-hand-index me-2"></i>Claim This Item
-                                        </a>
-                                    <?php endif; ?>
-                                    <a href="<?= APP_URL ?>/messages/new?to=<?= $item['user_id'] ?>&item=<?= $item['id'] ?>"
-                                        class="btn btn-outline-primary btn-sm">
-                                        <i class="bi bi-chat-dots me-2"></i>Contact Finder
-                                    </a>
                                 <?php endif; ?>
-                            <?php else: ?>
-                                <a href="<?= APP_URL ?>/login" class="btn btn-warning">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to Claim
-                                </a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -198,11 +175,10 @@
                                     <div class="card-body p-3">
                                         <h6 class="mb-2"><?= htmlspecialchars($match['lost_item']['title'] ?? '') ?></h6>
                                         <p class="small text-muted mb-2">
-                                            <?= truncate($match['lost_item']['description'] ?? '', 80) ?>
-                                        </p>
+                                            <?= truncate($match['lost_item']['description'] ?? '', 80) ?></p>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="badge bg-info"><?= $match['match_score'] ?? 0 ?>% Match</span>
-                                            <a href="<?= APP_URL ?>/lost-items/<?= $match['lost_item']['id'] ?>"
+                                            <a href="<?= APP_URL ?>/admin/lost-items/<?= $match['lost_item']['id'] ?>"
                                                 class="btn btn-sm btn-outline-primary">View</a>
                                         </div>
                                     </div>
@@ -237,4 +213,4 @@
     </div>
 </div>
 
-<?php include __DIR__ . '/../layouts/footer-dashboard.php'; ?>
+<?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>

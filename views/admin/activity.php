@@ -13,11 +13,14 @@
                 <small class="text-muted">System activity history</small>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
-                    <i class="bi bi-moon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
@@ -56,7 +59,7 @@
             </div>
         </div>
 
-        <?php 
+        <?php
         // Sort logs by ID (newest first)
         $logs = $logs ?? [];
         usort($logs, fn($a, $b) => ($b['id'] ?? 0) - ($a['id'] ?? 0));
@@ -109,7 +112,8 @@
 </div>
 
 <?php
-function getActionBadgeColor($action) {
+function getActionBadgeColor($action)
+{
     $colors = [
         'login' => 'success',
         'logout' => 'secondary',

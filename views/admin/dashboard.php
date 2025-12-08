@@ -5,8 +5,9 @@
 <?php
 // Helper function to extract count from stats - try multiple paths
 if (!function_exists('getAdminStatCount')) {
-    function getAdminStatCount($stats, $keys) {
-        foreach ((array)$keys as $key) {
+    function getAdminStatCount($stats, $keys)
+    {
+        foreach ((array) $keys as $key) {
             // Check direct key
             if (isset($stats[$key])) {
                 $value = $stats[$key];
@@ -14,16 +15,16 @@ if (!function_exists('getAdminStatCount')) {
                     return $value['count'] ?? $value['total'] ?? count($value);
                 }
                 if (is_numeric($value)) {
-                    return (int)$value;
+                    return (int) $value;
                 }
             }
             // Check nested in 'counts' object
             if (isset($stats['counts'][$key])) {
-                return (int)$stats['counts'][$key];
+                return (int) $stats['counts'][$key];
             }
             // Check nested in 'pending' object
             if (isset($stats['pending'][$key])) {
-                return (int)$stats['pending'][$key];
+                return (int) $stats['pending'][$key];
             }
         }
         return 0;
@@ -50,7 +51,7 @@ if ($pendingFoundCount === 0 && isset($stats['pending_found_items']) && is_array
 }
 // Check for pending_claims_count added by controller
 if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
-    $pendingClaimsCount = (int)$stats['pending_claims_count'];
+    $pendingClaimsCount = (int) $stats['pending_claims_count'];
 }
 ?>
 
@@ -65,11 +66,14 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                 <p class="text-muted mb-0 small">Overview of system activity</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative" title="Notifications">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="bi bi-moon" id="headerThemeIcon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
@@ -79,7 +83,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
         <!-- Quick Stats Row -->
         <div class="row g-3 mb-4">
             <div class="col-6 col-lg-3">
-                <a href="<?= APP_URL ?>/admin/lost-items" class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
+                <a href="<?= APP_URL ?>/admin/lost-items"
+                    class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center">
                             <div class="stat-icon bg-danger bg-opacity-10 text-danger">
@@ -94,7 +99,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                 </a>
             </div>
             <div class="col-6 col-lg-3">
-                <a href="<?= APP_URL ?>/admin/found-items" class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
+                <a href="<?= APP_URL ?>/admin/found-items"
+                    class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center">
                             <div class="stat-icon bg-success bg-opacity-10 text-success">
@@ -124,7 +130,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                 </div>
             </div>
             <div class="col-6 col-lg-3">
-                <a href="<?= APP_URL ?>/admin/users" class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
+                <a href="<?= APP_URL ?>/admin/users"
+                    class="card border-0 shadow-sm h-100 text-decoration-none stat-card-hover">
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center">
                             <div class="stat-icon bg-info bg-opacity-10 text-info">
@@ -185,7 +192,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                                 </div>
                                 <h3 class="fw-bold mb-1"><?= $pendingClaimsCount ?></h3>
                                 <p class="text-muted mb-3 small">Pending Claims</p>
-                                <a href="<?= APP_URL ?>/claims?status=pending" class="btn btn-sm btn-outline-primary">
+                                <a href="<?= APP_URL ?>/admin/claims?status=pending"
+                                    class="btn btn-sm btn-outline-primary">
                                     Review <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
@@ -215,7 +223,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                         </a>
                     </div>
                     <div class="col-6 col-md-3">
-                        <a href="<?= APP_URL ?>/admin/categories" class="card border h-100 text-decoration-none action-card">
+                        <a href="<?= APP_URL ?>/admin/categories"
+                            class="card border h-100 text-decoration-none action-card">
                             <div class="card-body text-center py-4">
                                 <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-2">
                                     <i class="bi bi-tags"></i>
@@ -225,7 +234,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                         </a>
                     </div>
                     <div class="col-6 col-md-3">
-                        <a href="<?= APP_URL ?>/admin/locations" class="card border h-100 text-decoration-none action-card">
+                        <a href="<?= APP_URL ?>/admin/locations"
+                            class="card border h-100 text-decoration-none action-card">
                             <div class="card-body text-center py-4">
                                 <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-2">
                                     <i class="bi bi-geo-alt"></i>
@@ -235,7 +245,8 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
                         </a>
                     </div>
                     <div class="col-6 col-md-3">
-                        <a href="<?= APP_URL ?>/admin/reports" class="card border h-100 text-decoration-none action-card">
+                        <a href="<?= APP_URL ?>/admin/reports"
+                            class="card border h-100 text-decoration-none action-card">
                             <div class="card-body text-center py-4">
                                 <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-2">
                                     <i class="bi bi-graph-up"></i>
@@ -251,37 +262,43 @@ if ($pendingClaimsCount === 0 && isset($stats['pending_claims_count'])) {
 </div>
 
 <style>
-.stat-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-}
-.stat-card-hover:hover {
-    transform: translateY(-2px);
-    transition: transform 0.2s;
-}
-.stat-card-hover .card-body {
-    transition: background 0.2s;
-}
-.pending-card {
-    transition: all 0.2s;
-}
-.pending-card:hover {
-    border-color: #dee2e6 !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-.action-card {
-    transition: all 0.2s;
-}
-.action-card:hover {
-    transform: translateY(-2px);
-    border-color: #dee2e6 !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .stat-card-hover:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s;
+    }
+
+    .stat-card-hover .card-body {
+        transition: background 0.2s;
+    }
+
+    .pending-card {
+        transition: all 0.2s;
+    }
+
+    .pending-card:hover {
+        border-color: #dee2e6 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .action-card {
+        transition: all 0.2s;
+    }
+
+    .action-card:hover {
+        transform: translateY(-2px);
+        border-color: #dee2e6 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
 </style>
 
 <?php include __DIR__ . '/../layouts/footer-dashboard.php'; ?>

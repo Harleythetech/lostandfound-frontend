@@ -13,11 +13,14 @@
                 <small class="text-muted">Manage all <?= $itemType ?> item reports</small>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= APP_URL ?>/admin/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button class="btn btn-outline-secondary btn-sm" id="darkModeToggle">
-                    <i class="bi bi-moon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
@@ -33,10 +36,13 @@
                         <select name="status" class="form-select form-select-sm">
                             <option value="">All Statuses</option>
                             <option value="pending" <?= ($status ?? '') === 'pending' ? 'selected' : '' ?>>Pending</option>
-                            <option value="approved" <?= ($status ?? '') === 'approved' ? 'selected' : '' ?>>Approved</option>
-                            <option value="rejected" <?= ($status ?? '') === 'rejected' ? 'selected' : '' ?>>Rejected</option>
+                            <option value="approved" <?= ($status ?? '') === 'approved' ? 'selected' : '' ?>>Approved
+                            </option>
+                            <option value="rejected" <?= ($status ?? '') === 'rejected' ? 'selected' : '' ?>>Rejected
+                            </option>
                             <option value="matched" <?= ($status ?? '') === 'matched' ? 'selected' : '' ?>>Matched</option>
-                            <option value="resolved" <?= ($status ?? '') === 'resolved' ? 'selected' : '' ?>>Resolved</option>
+                            <option value="resolved" <?= ($status ?? '') === 'resolved' ? 'selected' : '' ?>>Resolved
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -52,7 +58,8 @@
                     </div>
                     <div class="col-md-5">
                         <label class="form-label small mb-1">Search</label>
-                        <input type="text" name="search" class="form-control form-control-sm" placeholder="Search items..." value="<?= htmlspecialchars($search ?? '') ?>">
+                        <input type="text" name="search" class="form-control form-control-sm"
+                            placeholder="Search items..." value="<?= htmlspecialchars($search ?? '') ?>">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary btn-sm w-100">
@@ -63,7 +70,7 @@
             </div>
         </div>
 
-        <?php 
+        <?php
         // Sort items by ID
         usort($items, fn($a, $b) => ($a['id'] ?? 0) - ($b['id'] ?? 0));
         ?>
@@ -94,17 +101,29 @@
                                     <td class="small">#<?= $item['id'] ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <?php if (!empty($item['images'][0])): ?>
-                                                <img src="<?= API_BASE_URL ?>/uploads/<?= $item['images'][0]['image_path'] ?? $item['images'][0] ?>" 
-                                                     class="rounded me-2" style="width: 36px; height: 36px; object-fit: cover;">
+                                            <?php
+                                            $img = '';
+                                            if (!empty($item['primary_image'])) {
+                                                $img = is_array($item['primary_image']) ? ($item['primary_image']['url'] ?? $item['primary_image']['file_name'] ?? '') : $item['primary_image'];
+                                            } elseif (!empty($item['images'][0])) {
+                                                $img = is_array($item['images'][0]) ? ($item['images'][0]['url'] ?? $item['images'][0]['file_name'] ?? $item['images'][0]['image_path'] ?? '') : $item['images'][0];
+                                            }
+                                            ?>
+                                            <?php if (!empty($img)): ?>
+                                                <img src="<?= htmlspecialchars(normalizeImageUrl($img)) ?>" class="rounded me-2"
+                                                    style="width: 36px; height: 36px; object-fit: cover;">
                                             <?php else: ?>
-                                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                                <div class="bg-light rounded me-2 d-flex align-items-center justify-content-center"
+                                                    style="width: 36px; height: 36px;">
                                                     <i class="bi bi-image text-muted small"></i>
                                                 </div>
                                             <?php endif; ?>
                                             <div>
-                                                <div class="fw-semibold small"><?= htmlspecialchars($item['title'] ?? $item['item_name'] ?? 'Unknown') ?></div>
-                                                <small class="text-muted"><?= truncate($item['description'] ?? '', 30) ?></small>
+                                                <div class="fw-semibold small">
+                                                    <?= htmlspecialchars($item['title'] ?? $item['item_name'] ?? 'Unknown') ?>
+                                                </div>
+                                                <small
+                                                    class="text-muted"><?= truncate($item['description'] ?? '', 30) ?></small>
                                             </div>
                                         </div>
                                     </td>
@@ -113,10 +132,13 @@
                                         <br><small class="text-muted"><?= $item['user']['school_id'] ?? '' ?></small>
                                     </td>
                                     <td class="small"><?= htmlspecialchars($item['category']['name'] ?? 'N/A') ?></td>
-                                    <td><span class="badge <?= getStatusBadgeClass($item['status'] ?? 'pending') ?>"><?= ucfirst($item['status'] ?? 'pending') ?></span></td>
+                                    <td><span
+                                            class="badge <?= getStatusBadgeClass($item['status'] ?? 'pending') ?>"><?= ucfirst($item['status'] ?? 'pending') ?></span>
+                                    </td>
                                     <td class="small"><?= formatDate($item['created_at'] ?? '', 'M j, Y') ?></td>
                                     <td>
-                                        <a href="<?= APP_URL ?>/<?= $itemType ?>-items/<?= $item['id'] ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <a href="<?= APP_URL ?>/admin/<?= $itemType ?>-items/<?= $item['id'] ?>"
+                                            class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-eye"></i> View
                                         </a>
                                     </td>
@@ -134,7 +156,8 @@
                 <ul class="pagination pagination-sm justify-content-center">
                     <?php for ($i = 1; $i <= $pagination['totalPages']; $i++): ?>
                         <li class="page-item <?= $i == ($pagination['currentPage'] ?? 1) ? 'active' : '' ?>">
-                            <a class="page-link" href="?page=<?= $i ?>&status=<?= $status ?? '' ?>&category_id=<?= $categoryId ?? '' ?>&search=<?= urlencode($search ?? '') ?>">
+                            <a class="page-link"
+                                href="?page=<?= $i ?>&status=<?= $status ?? '' ?>&category_id=<?= $categoryId ?? '' ?>&search=<?= urlencode($search ?? '') ?>">
                                 <?= $i ?>
                             </a>
                         </li>

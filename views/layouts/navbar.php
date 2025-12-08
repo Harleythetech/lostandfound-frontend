@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-custom-blue sticky-top">
     <div class="container py-2">
         <a class="navbar-brand fw-bold" href="<?= APP_URL ?>/">
             <?= APP_NAME ?>
@@ -17,8 +17,9 @@
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <button class="nav-link btn btn-link text-white" onclick="toggleDarkMode()" title="Toggle theme">
-                        <i id="navThemeIcon" class="bi bi-moon"></i>
+                    <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                        data-theme-toggle="true" title="Toggle Dark Mode">
+                        <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                     </button>
                 </li>
                 <li class="nav-item">
@@ -30,13 +31,3 @@
         </div>
     </div>
 </nav>
-
-<?php $flash = getFlash(); ?>
-<?php if ($flash): ?>
-<div class="container mt-3">
-    <div class="alert alert-<?= $flash['type'] ?> alert-dismissible fade show" role="alert">
-        <?= htmlspecialchars($flash['message']) ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-</div>
-<?php endif; ?>

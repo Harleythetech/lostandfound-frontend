@@ -18,7 +18,7 @@
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()"><i class="bi bi-moon"></i></button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleDarkMode()" data-theme-toggle="true"><i class="bi bi-moon"></i></button>
             </div>
         </div>
 
@@ -71,8 +71,15 @@
             <div class="col-md-6 col-lg-4">
                 <a href="<?= APP_URL ?>/items/<?= $item['id'] ?>" class="card h-100 border item-card text-decoration-none">
                     <div class="position-relative">
-                        <?php if (!empty($item['image'])): ?>
-                        <img src="<?= APP_URL ?>/<?= htmlspecialchars($item['image']) ?>" class="card-img-top" style="height: 160px; object-fit: cover;">
+                        <?php 
+                        $cardImage = '';
+                        if (!empty($item['image'])) {
+                            $cardImage = is_array($item['image']) ? ($item['image']['url'] ?? $item['image']['image_path'] ?? $item['image']['file_name'] ?? '') : $item['image'];
+                            $cardImage = normalizeImageUrl($cardImage);
+                        }
+                        ?>
+                        <?php if (!empty($cardImage)): ?>
+                        <img src="<?= htmlspecialchars($cardImage) ?>" class="card-img-top" style="height: 160px; object-fit: cover;">
                         <?php else: ?>
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 160px;">
                             <i class="bi bi-image text-muted display-4"></i>

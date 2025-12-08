@@ -1,6 +1,8 @@
 <?php $pageTitle = '404 - Page Not Found'; ?>
 <?php include __DIR__ . '/../layouts/header.php'; ?>
 
+<?php displayFlash(); ?>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">

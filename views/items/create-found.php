@@ -3,7 +3,7 @@
 
 <div class="dashboard-wrapper">
     <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
-    
+
     <main class="dashboard-main">
         <!-- Top Bar -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -12,22 +12,40 @@
                 <p class="text-muted mb-0 small">Help reunite this item with its owner</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative" title="Notifications">
+                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                    title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
-                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="bi bi-moon" id="headerThemeIcon"></i>
+                <button type="button" class="btn ui-btn-secondary btn-sm" onclick="toggleDarkMode()"
+                    data-theme-toggle="true" title="Toggle Dark Mode">
+                    <i class="bi bi-moon header-theme-icon" id="headerThemeIcon"></i>
                 </button>
             </div>
         </div>
 
+        <!-- Optional error banner -->
+        <?php $old = $old ?? []; ?>
+
+        <?php if (!empty($message) || !empty($errors)): ?>
+            <div class="alert alert-danger" role="alert">
+                <strong><?= htmlspecialchars($message ?? 'Please check the form for errors') ?></strong>
+                <?php if (!empty($errors) && is_array($errors)): ?>
+                    <div class="mt-2 small">
+                        <?php foreach ($errors as $err): ?>
+                            <div>- <?= htmlspecialchars($err) ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
         <!-- Thank you banner -->
-        <div class="alert alert-success border-0 mb-4 d-flex align-items-center" style="background: linear-gradient(135deg, #d1e7dd 0%, #badbcc 100%);">
-            <i class="bi bi-heart-fill text-success me-3 fs-4"></i>
-            <div>
+        <div class="thank-you-banner">
+            <div class="icon"><i class="bi bi-heart-fill"></i></div>
+            <div class="content">
                 <strong>Thank you for being a good Samaritan!</strong>
-                <p class="mb-0 small text-muted">Your honesty helps build a better community.</p>
+                <p class="mb-0">Your honesty helps build a better community.</p>
             </div>
         </div>
 
@@ -41,36 +59,48 @@
                             <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
                                 <i class="bi bi-info-circle me-2"></i>Item Details
                             </h6>
-                            
+
                             <div class="mb-3">
-                                <label for="title" class="form-label">What did you find? <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-lg" id="title" name="title" 
-                                       placeholder="e.g., Black Wallet, iPhone, Student ID Card" required>
+                                <label for="title" class="form-label">What did you find? <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control form-control-lg" id="title" name="title"
+                                    placeholder="e.g., Black Wallet, iPhone, Student ID Card" required
+                                    value="<?= htmlspecialchars($old['title'] ?? '') ?>">
                             </div>
-                            
+
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="description" name="description" rows="3" 
-                                          placeholder="Describe the item - brand, color, size. Don't include personal info found inside!" required></textarea>
-                                <div class="form-text"><i class="bi bi-shield-lock me-1"></i>Keep some details private to verify the true owner</div>
+                                <label for="description" class="form-label">Description <span
+                                        class="text-danger">*</span></label>
+                                <textarea class="form-control" id="description" name="description" rows="3"
+                                    placeholder="Describe the item - brand, color, size. Don't include personal info found inside!"
+                                    required><?= htmlspecialchars($old['description'] ?? '') ?></textarea>
+                                <div class="form-text"><i class="bi bi-shield-lock me-1"></i>Keep some details private
+                                    to verify the true owner</div>
                             </div>
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                    <label for="category_id" class="form-label">Category <span
+                                            class="text-danger">*</span></label>
                                     <select class="form-select" id="category_id" name="category_id" required>
                                         <option value="">Select category</option>
                                         <?php foreach ($categories ?? [] as $cat): ?>
-                                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                                            <option value="<?= $cat['id'] ?>" <?= (isset($old['category_id']) && $old['category_id'] == $cat['id']) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($cat['name']) ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="found_location_id" class="form-label">Where Found <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="found_location_id" name="found_location_id" required>
+                                    <label for="found_location_id" class="form-label">Where Found <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="found_location_id" name="found_location_id"
+                                        required>
                                         <option value="">Select location</option>
                                         <?php foreach ($locations ?? [] as $loc): ?>
-                                        <option value="<?= $loc['id'] ?>"><?= htmlspecialchars($loc['name']) ?></option>
+                                            <option value="<?= $loc['id'] ?>" <?= (isset($old['found_location_id']) && $old['found_location_id'] == $loc['id']) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($loc['name']) ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -84,16 +114,19 @@
                             <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
                                 <i class="bi bi-clock me-2"></i>When Found
                             </h6>
-                            
+
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="found_date" class="form-label">Date Found <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="found_date" name="found_date" 
-                                           max="<?= date('Y-m-d') ?>" required>
+                                    <label for="found_date" class="form-label">Date Found <span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="found_date" name="found_date"
+                                        max="<?= date('Y-m-d') ?>" required
+                                        value="<?= htmlspecialchars($old['found_date'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="found_time" class="form-label">Approximate Time</label>
-                                    <input type="time" class="form-control" id="found_time" name="found_time">
+                                    <input type="time" class="form-control" id="found_time" name="found_time"
+                                        value="<?= htmlspecialchars($old['found_time'] ?? '') ?>">
                                 </div>
                             </div>
                         </div>
@@ -105,18 +138,21 @@
                             <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
                                 <i class="bi bi-fingerprint me-2"></i>Verification Details
                             </h6>
-                            
+
                             <div class="mb-3">
-                                <label for="unique_identifiers" class="form-label">Unique Identifiers <span class="badge bg-secondary">Hidden from public</span></label>
-                                <textarea class="form-control" id="unique_identifiers" name="unique_identifiers" rows="2" 
-                                          placeholder="Note unique features to verify ownership (won't be shown publicly)"></textarea>
-                                <div class="form-text"><i class="bi bi-lock me-1"></i>Use these to confirm the real owner</div>
+                                <label for="unique_identifiers" class="form-label">Unique Identifiers <span
+                                        class="badge bg-secondary">Hidden from public</span></label>
+                                <textarea class="form-control" id="unique_identifiers" name="unique_identifiers"
+                                    rows="2"
+                                    placeholder="Note unique features to verify ownership (won't be shown publicly)"><?= htmlspecialchars($old['unique_identifiers'] ?? '') ?></textarea>
+                                <div class="form-text"><i class="bi bi-lock me-1"></i>Use these to confirm the real
+                                    owner</div>
                             </div>
-                            
+
                             <div class="mb-0">
                                 <label for="condition_notes" class="form-label">Item Condition</label>
-                                <textarea class="form-control" id="condition_notes" name="condition_notes" rows="2" 
-                                          placeholder="Describe the condition of the item (e.g., good condition, screen cracked, wet)"></textarea>
+                                <textarea class="form-control" id="condition_notes" name="condition_notes" rows="2"
+                                    placeholder="Describe the condition of the item (e.g., good condition, screen cracked, wet)"><?= htmlspecialchars($old['condition_notes'] ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
@@ -130,10 +166,10 @@
                             <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
                                 <i class="bi bi-images me-2"></i>Photos
                             </h6>
-                            
+
                             <div class="upload-zone" id="uploadZone">
-                                <input type="file" class="form-control d-none" id="images" name="images[]" 
-                                       accept="image/jpeg,image/png,image/gif" multiple>
+                                <input type="file" class="form-control d-none" id="images" name="images[]"
+                                    accept="image/jpeg,image/png,image/gif" multiple data-no-default-preview>
                                 <label for="images" class="upload-label">
                                     <i class="bi bi-cloud-arrow-up fs-1 text-muted"></i>
                                     <p class="mb-1 text-muted">Click to upload</p>
@@ -150,28 +186,32 @@
                             <h6 class="text-uppercase text-muted fw-semibold mb-3 small">
                                 <i class="bi bi-geo-alt me-2"></i>Item Storage
                             </h6>
-                            
+
                             <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" id="turned_in_to_security" name="turned_in_to_security" value="1">
+                                <input class="form-check-input" type="checkbox" id="turned_in_to_security"
+                                    name="turned_in_to_security" value="1" <?= isset($old['turned_in_to_security']) ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="turned_in_to_security">
                                     <i class="bi bi-shield-fill me-1 text-warning"></i>Turned in to Security
                                 </label>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label for="storage_location_id" class="form-label">Storage Location</label>
                                 <select class="form-select" id="storage_location_id" name="storage_location_id">
                                     <option value="">Select where item is stored</option>
                                     <?php foreach ($locations ?? [] as $loc): ?>
-                                    <option value="<?= $loc['id'] ?>"><?= htmlspecialchars($loc['name']) ?></option>
+                                        <option value="<?= $loc['id'] ?>" <?= (isset($old['storage_location_id']) && $old['storage_location_id'] == $loc['id']) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($loc['name']) ?>
+                                        </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            
+
                             <div class="mb-0">
                                 <label for="storage_notes" class="form-label">Storage Notes</label>
-                                <input type="text" class="form-control" id="storage_notes" name="storage_notes" 
-                                       placeholder="e.g., Left at guard station, Room 101">
+                                <input type="text" class="form-control" id="storage_notes" name="storage_notes"
+                                    placeholder="e.g., Left at guard station, Room 101"
+                                    value="<?= htmlspecialchars($old['storage_notes'] ?? '') ?>">
                             </div>
                         </div>
                     </div>
@@ -194,58 +234,36 @@
 </div>
 
 <style>
-.upload-zone {
-    border: 2px dashed #dee2e6;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    text-align: center;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-.upload-zone:hover {
-    border-color: #adb5bd;
-    background: #f8f9fa;
-}
-.upload-label {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0;
-}
+    .upload-zone {
+        border: 2px dashed #dee2e6;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .upload-zone:hover {
+        border-color: #adb5bd;
+        background: #f8f9fa;
+    }
+
+    .upload-label {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+    }
 </style>
 
+<script src="<?= APP_URL ?>/assets/js/image-preview.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Image preview
-    const imageInput = document.getElementById('images');
-    const imagePreview = document.getElementById('imagePreview');
-    const uploadZone = document.getElementById('uploadZone');
-    
-    imageInput.addEventListener('change', function() {
-        imagePreview.innerHTML = '';
-        const files = Array.from(this.files).slice(0, 5);
-        
-        if (files.length > 0) {
-            uploadZone.style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function () {
+        if (typeof initImagePreview === 'function') {
+            initImagePreview('images', 'imagePreview', 'uploadZone', { maxFiles: 5, toastTimeoutMs: 8000 });
         }
-        
-        files.forEach((file, index) => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const col = document.createElement('div');
-                col.className = 'col-6';
-                col.innerHTML = `
-                    <div class="position-relative">
-                        <img src="${e.target.result}" class="img-fluid rounded" style="height: 80px; width: 100%; object-fit: cover;">
-                    </div>
-                `;
-                imagePreview.appendChild(col);
-            };
-            reader.readAsDataURL(file);
-        });
     });
-});
 </script>
 
 <?php include __DIR__ . '/../layouts/footer-dashboard.php'; ?>
