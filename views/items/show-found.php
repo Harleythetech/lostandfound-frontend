@@ -93,13 +93,13 @@
 
                         <div class="mb-3">
                             <h6 class="text-muted mb-2 small">Description</h6>
-                            <p class="mb-0"><?= nl2br(htmlspecialchars($item['description'] ?? '')) ?></p>
+                            <p class="mb-0"><?= nl2br(sanitizeForDisplay($item['description'] ?? '')) ?></p>
                         </div>
 
                         <?php if (!empty($item['distinctive_features'])): ?>
                             <div class="mb-3">
                                 <h6 class="text-muted mb-2 small">Distinctive Features</h6>
-                                <p class="mb-0"><?= nl2br(htmlspecialchars($item['distinctive_features'])) ?></p>
+                                <p class="mb-0"><?= nl2br(sanitizeForDisplay($item['distinctive_features'] ?? '')) ?></p>
                             </div>
                         <?php endif; ?>
 
@@ -134,15 +134,25 @@
                         <hr>
 
                         <!-- Finder Info -->
+                        <?php
+                        // Support multiple API shapes: nested user object or flattened fields
+                        $finderDisplay = '';
+                        if (!empty($item['user']) && is_array($item['user'])) {
+                            $u = $item['user'];
+                            $finderDisplay = $u['name'] ?? trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
+                        }
+                        if (empty($finderDisplay)) {
+                            $finderDisplay = $item['found_by_name'] ?? $item['finder_name'] ?? trim(($item['found_by_first_name'] ?? '') . ' ' . ($item['found_by_last_name'] ?? ''));
+                        }
+                        ?>
                         <div class="d-flex align-items-center mb-3">
                             <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                                 style="width: 40px; height: 40px;">
-                                <?= strtoupper(substr($item['user']['first_name'] ?? 'U', 0, 1)) ?>
+                                <?= strtoupper(substr($finderDisplay ?? 'U', 0, 1)) ?>
                             </div>
                             <div>
                                 <small class="text-muted d-block">Found by</small>
-                                <span
-                                    class="fw-medium"><?= htmlspecialchars(($item['user']['first_name'] ?? '') . ' ' . ($item['user']['last_name'] ?? '')) ?></span>
+                                <span class="fw-medium"><?= sanitizeForDisplay($finderDisplay) ?></span>
                             </div>
                         </div>
 

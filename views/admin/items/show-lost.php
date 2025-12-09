@@ -13,7 +13,8 @@
                         <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin">Home</a></li>
                         <li class="breadcrumb-item"><a href="<?= APP_URL ?>/admin/lost-items">Lost Items</a></li>
                         <li class="breadcrumb-item active text-truncate" style="max-width: 200px;">
-                            <?= htmlspecialchars($item['title'] ?? '') ?></li>
+                            <?= htmlspecialchars($item['title'] ?? '') ?>
+                        </li>
                     </ol>
                 </nav>
             </div>
@@ -89,13 +90,13 @@
 
                         <div class="mb-3">
                             <h6 class="text-muted mb-2 small">Description</h6>
-                            <p class="mb-0"><?= nl2br(htmlspecialchars($item['description'] ?? '')) ?></p>
+                            <p class="mb-0"><?= nl2br(sanitizeForDisplay($item['description'] ?? '')) ?></p>
                         </div>
 
                         <?php if (!empty($item['distinctive_features'])): ?>
                             <div class="mb-3">
                                 <h6 class="text-muted mb-2 small">Distinctive Features</h6>
-                                <p class="mb-0"><?= nl2br(htmlspecialchars($item['distinctive_features'])) ?></p>
+                                <p class="mb-0"><?= nl2br(sanitizeForDisplay($item['distinctive_features'] ?? '')) ?></p>
                             </div>
                         <?php endif; ?>
 
@@ -130,15 +131,24 @@
                         <hr>
 
                         <!-- Reporter Info -->
+                        <?php
+                        $reporterDisplay = '';
+                        if (!empty($item['user']) && is_array($item['user'])) {
+                            $u = $item['user'];
+                            $reporterDisplay = $u['name'] ?? trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
+                        }
+                        if (empty($reporterDisplay)) {
+                            $reporterDisplay = $item['reported_by_name'] ?? $item['reporter_name'] ?? trim(($item['reported_by_first_name'] ?? '') . ' ' . ($item['reported_by_last_name'] ?? ''));
+                        }
+                        ?>
                         <div class="d-flex align-items-center mb-3">
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
                                 style="width: 40px; height: 40px;">
-                                <?= strtoupper(substr($item['user']['first_name'] ?? 'U', 0, 1)) ?>
+                                <?= strtoupper(substr($reporterDisplay ?? 'U', 0, 1)) ?>
                             </div>
                             <div>
                                 <small class="text-muted d-block">Reported by</small>
-                                <span
-                                    class="fw-medium"><?= htmlspecialchars(($item['user']['first_name'] ?? '') . ' ' . ($item['user']['last_name'] ?? '')) ?></span>
+                                <span class="fw-medium"><?= sanitizeForDisplay($reporterDisplay) ?></span>
                             </div>
                         </div>
 
@@ -191,7 +201,8 @@
                                     <div class="card-body p-3">
                                         <h6 class="mb-2"><?= htmlspecialchars($match['found_item']['title'] ?? '') ?></h6>
                                         <p class="small text-muted mb-2">
-                                            <?= truncate($match['found_item']['description'] ?? '', 80) ?></p>
+                                            <?= truncate($match['found_item']['description'] ?? '', 80) ?>
+                                        </p>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="badge bg-info"><?= $match['match_score'] ?? 0 ?>% Match</span>
                                             <a href="<?= APP_URL ?>/admin/found-items/<?= $match['found_item']['id'] ?>"
@@ -244,7 +255,8 @@ $hasPhone = !empty($item['phone_number']) && ($item['contact_via_phone'] ?? fals
                 </div>
                 <div class="modal-body">
                     <p class="text-muted small mb-3">Choose how you'd like to contact
-                        <?= htmlspecialchars($item['user']['first_name'] ?? 'the owner') ?>:</p>
+                        <?= sanitizeForDisplay(explode(' ', $reporterDisplay ?? 'the owner')[0]) ?>:
+                    </p>
 
                     <?php if ($hasEmail): ?>
                         <div class="card mb-3">

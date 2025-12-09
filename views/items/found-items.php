@@ -125,7 +125,7 @@
                                     <?= htmlspecialchars($item['title'] ?? '') ?>
                                 </h6>
                                 <p class="card-text text-muted small mb-2 text-truncate">
-                                    <?= htmlspecialchars($item['description'] ?? '') ?>
+                                    <?= sanitizeForDisplay($item['description'] ?? '') ?>
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center text-muted small">
                                     <span><i

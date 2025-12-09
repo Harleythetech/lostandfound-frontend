@@ -271,7 +271,7 @@ function getMatchItemImage($item, $images = null)
                                                     </a>
                                                 </h6>
                                                 <p class="text-muted small mb-0 text-truncate" style="max-width: 200px;">
-                                                    <?= htmlspecialchars($lostItemDesc) ?>
+                                                    <?= sanitizeForDisplay($lostItemDesc) ?>
                                                 </p>
                                             </div>
                                         </div>
@@ -333,7 +333,7 @@ function getMatchItemImage($item, $images = null)
                                                     </a>
                                                 </h6>
                                                 <p class="text-muted small mb-0 text-truncate" style="max-width: 200px;">
-                                                    <?= htmlspecialchars($foundItemDesc) ?>
+                                                    <?= sanitizeForDisplay($foundItemDesc) ?>
                                                 </p>
                                             </div>
 

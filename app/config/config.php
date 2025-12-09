@@ -146,8 +146,7 @@ function apiRequestMultipart($endpoint, $data, $token = null)
 
     $body .= "--{$boundary}--\r\n";
 
-    // Log for debugging
-    error_log("apiRequestMultipart to {$endpoint}: " . count($fields) . " fields, " . count($files) . " files");
+
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -280,6 +279,16 @@ function formatDate($date, $format = 'M d, Y')
     if (empty($date))
         return 'N/A';
     return date($format, strtotime($date));
+}
+
+// Decode any HTML entities stored in data (e.g., &amp;#x27;) then escape for safe output
+function sanitizeForDisplay($text)
+{
+    $text = $text ?? '';
+    // Decode HTML entities that may have been stored or double-encoded by APIs
+    $decoded = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    // Escape for HTML output (escape quotes to be safe in attributes)
+    return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
 // Truncate text helper

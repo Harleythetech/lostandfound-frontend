@@ -5,7 +5,7 @@
     <!-- Left Side - Brand -->
     <div class="auth-brand-side">
         <div class="auth-brand-top p-3">
-            <a href="<?= APP_URL ?>" class="btn btn-outline-light btn-sm me-2"><i
+            <a href="<?= APP_URL ?>/" class="btn btn-outline-light btn-sm me-2"><i
                     class="bi bi-arrow-left me-1"></i>Back</a>
             <button class="btn btn-outline-light btn-sm" type="button" onclick="toggleDarkMode()" title="Toggle theme">
                 <i id="authBrandThemeIcon" class="bi bi-moon"></i>

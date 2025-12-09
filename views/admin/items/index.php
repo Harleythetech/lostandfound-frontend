@@ -128,10 +128,40 @@
                                         </div>
                                     </td>
                                     <td class="small">
-                                        <?= htmlspecialchars(($item['user']['first_name'] ?? '') . ' ' . ($item['user']['last_name'] ?? '')) ?>
-                                        <br><small class="text-muted"><?= $item['user']['school_id'] ?? '' ?></small>
+                                        <?php
+                                        // Robust user display: prefer nested user.name, then common flattened fields
+                                        $adminUserDisplay = '';
+                                        if (!empty($item['user']) && is_array($item['user'])) {
+                                            $u = $item['user'];
+                                            $adminUserDisplay = $u['name'] ?? trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? ''));
+                                        }
+
+                                        // Additional flattened fallbacks from various API shapes
+                                        if (empty($adminUserDisplay)) {
+                                            $adminUserDisplay = $item['reported_by_name'] ?? $item['found_by_name'] ?? $item['reporter_name'] ?? $item['user_name'] ?? $item['name'] ?? '';
+                                        }
+
+                                        if (empty($adminUserDisplay)) {
+                                            $adminUserDisplay = trim(($item['user_first_name'] ?? $item['first_name'] ?? '') . ' ' . ($item['user_last_name'] ?? $item['last_name'] ?? ''));
+                                        }
+
+                                        // Final fallback: show nothing (we'll still display school if present)
+                                        ?>
+                                        <?= sanitizeForDisplay($adminUserDisplay) ?>
+                                        <?php
+                                        // Determine user school fallback sources
+                                        $userSchool = $item['user']['school_id'] ?? $item['user_school_id'] ?? $item['school_id'] ?? $item['found_by_school'] ?? $item['reporter_school_id'] ?? null;
+                                        if (!empty($userSchool)): ?>
+                                            <br><small class="text-muted"><?= htmlspecialchars($userSchool) ?></small>
+                                        <?php endif; ?>
                                     </td>
-                                    <td class="small"><?= htmlspecialchars($item['category']['name'] ?? 'N/A') ?></td>
+                                    <td class="small">
+                                        <?php
+                                        // Category fallbacks: nested category object or flattened fields
+                                        $catName = $item['category']['name'] ?? $item['category_name'] ?? $item['categoryName'] ?? $item['category_title'] ?? null;
+                                        echo htmlspecialchars($catName ?? '');
+                                        ?>
+                                    </td>
                                     <td><span
                                             class="badge <?= getStatusBadgeClass($item['status'] ?? 'pending') ?>"><?= ucfirst($item['status'] ?? 'pending') ?></span>
                                     </td>

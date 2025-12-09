@@ -49,7 +49,7 @@
                         <p class="text-muted small mb-2"><?= htmlspecialchars($user['school_id'] ?? '') ?></p>
                         <div>
                             <span
-                                class="badge bg-<?= ($user['role'] ?? 'user') === 'admin' ? 'danger' : (($user['role'] ?? 'user') === 'security' ? 'warning' : 'secondary') ?>">
+                                class="badge bg-<?= ($user['role'] ?? 'user') === 'admin' ? 'danger' : 'secondary' ?>">
                                 <?= ucfirst($user['role'] ?? 'user') ?>
                             </span>
                             <?php
@@ -90,8 +90,6 @@
                                 <select name="role" class="form-select form-select-sm">
                                     <option value="user" <?= ($user['role'] ?? 'user') === 'user' ? 'selected' : '' ?>>User
                                     </option>
-                                    <option value="security" <?= ($user['role'] ?? '') === 'security' ? 'selected' : '' ?>>
-                                        Security</option>
                                     <option value="admin" <?= ($user['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin
                                     </option>
                                 </select>

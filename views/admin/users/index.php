@@ -48,8 +48,6 @@
                         <select name="role" class="form-select form-select-sm">
                             <option value="">All Roles</option>
                             <option value="user" <?= ($role ?? '') === 'user' ? 'selected' : '' ?>>User</option>
-                            <option value="security" <?= ($role ?? '') === 'security' ? 'selected' : '' ?>>Security
-                            </option>
                             <option value="admin" <?= ($role ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
                         </select>
                     </div>
@@ -113,7 +111,7 @@
                                     <td class="small"><?= htmlspecialchars($u['school_id'] ?? '') ?></td>
                                     <td>
                                         <span
-                                            class="badge bg-<?= ($u['role'] ?? 'user') === 'admin' ? 'danger' : (($u['role'] ?? 'user') === 'security' ? 'warning' : 'secondary') ?>">
+                                            class="badge bg-<?= ($u['role'] ?? 'user') === 'admin' ? 'danger' : 'secondary' ?>">
                                             <?= ucfirst($u['role'] ?? 'user') ?>
                                         </span>
                                     </td>

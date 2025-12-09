@@ -117,7 +117,8 @@
                             <i class="bi bi-file-text text-primary me-2"></i>Description
                         </h6>
                         <p class="card-text mb-0">
-                            <?= nl2br(htmlspecialchars($item['description'] ?? 'No description provided.')) ?></p>
+                            <?= nl2br(sanitizeForDisplay($item['description'] ?? 'No description provided.')) ?>
+                        </p>
                     </div>
                 </div>
 

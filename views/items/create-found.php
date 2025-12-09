@@ -73,7 +73,7 @@
                                         class="text-danger">*</span></label>
                                 <textarea class="form-control" id="description" name="description" rows="3"
                                     placeholder="Describe the item - brand, color, size. Don't include personal info found inside!"
-                                    required><?= htmlspecialchars($old['description'] ?? '') ?></textarea>
+                                    required><?= sanitizeForDisplay($old['description'] ?? '') ?></textarea>
                                 <div class="form-text"><i class="bi bi-shield-lock me-1"></i>Keep some details private
                                     to verify the true owner</div>
                             </div>

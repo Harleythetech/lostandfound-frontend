@@ -124,7 +124,7 @@
                                         </div>
 
                                         <p class="card-text text-muted small mb-2 text-truncate-2">
-                                            <?= htmlspecialchars($item['description'] ?? '') ?>
+                                            <?= sanitizeForDisplay($item['description'] ?? '') ?>
                                         </p>
 
                                         <div class="small text-muted mb-2">

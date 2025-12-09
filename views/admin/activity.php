@@ -88,8 +88,12 @@
                                     <td class="small"><?= formatDate($log['created_at'] ?? '', 'M j, Y H:i:s') ?></td>
                                     <td>
                                         <?php if (!empty($log['user'])): ?>
-                                            <?= htmlspecialchars(($log['user']['first_name'] ?? '') . ' ' . ($log['user']['last_name'] ?? '')) ?>
-                                            <br><small class="text-muted"><?= $log['user']['school_id'] ?? '' ?></small>
+                                            <?php
+                                            $lu = $log['user'];
+                                            $logUserDisplay = $lu['name'] ?? trim(($lu['first_name'] ?? '') . ' ' . ($lu['last_name'] ?? ''));
+                                            ?>
+                                            <?= sanitizeForDisplay($logUserDisplay) ?>
+                                            <br><small class="text-muted"><?= htmlspecialchars($lu['school_id'] ?? '') ?></small>
                                         <?php else: ?>
                                             <span class="text-muted">System</span>
                                         <?php endif; ?>

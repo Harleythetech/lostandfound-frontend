@@ -64,7 +64,7 @@
                                         class="text-danger">*</span></label>
                                 <textarea class="form-control" id="description" name="description" rows="3"
                                     placeholder="Describe your item in detail - brand, color, size, contents, etc."
-                                    required><?= htmlspecialchars($old['description'] ?? '') ?></textarea>
+                                    required><?= sanitizeForDisplay($old['description'] ?? '') ?></textarea>
                             </div>
 
                             <div class="row g-3">

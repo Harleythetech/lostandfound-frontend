@@ -64,6 +64,22 @@ class ItemController
 
         $item = $response['data']['data'] ?? $response['data'];
 
+        // Normalize user/reporting fields for views (support multiple API shapes)
+        if (empty($item['user']) || !is_array($item['user'])) {
+            $userObj = [];
+            // prefer explicit nested user
+            if (!empty($response['data']['data']['user']) && is_array($response['data']['data']['user'])) {
+                $userObj = $response['data']['data']['user'];
+            }
+            // fallback flattened fields including top-level names returned by the API
+            $userObj['first_name'] = $userObj['first_name'] ?? ($item['first_name'] ?? $item['user_first_name'] ?? $item['reported_by_first_name'] ?? $item['found_by_first_name'] ?? '');
+            $userObj['last_name'] = $userObj['last_name'] ?? ($item['last_name'] ?? $item['user_last_name'] ?? $item['reported_by_last_name'] ?? $item['found_by_last_name'] ?? '');
+            $userObj['name'] = $userObj['name'] ?? ($item['name'] ?? $item['user_name'] ?? $item['reported_by_name'] ?? $item['reporter_name'] ?? $item['found_by_name'] ?? trim(($userObj['first_name'] ?? '') . ' ' . ($userObj['last_name'] ?? '')));
+            $userObj['school_id'] = $userObj['school_id'] ?? ($item['school_id'] ?? $item['user_school_id'] ?? $item['reported_by_school_id'] ?? $item['reporter_school_id'] ?? null);
+            $userObj['email'] = $userObj['email'] ?? ($item['email'] ?? $item['reporter_email'] ?? $item['found_by_email'] ?? null);
+            $item['user'] = $userObj;
+        }
+
         // Get potential matches if logged in and user owns the item
         $matches = [];
         if (isLoggedIn()) {
@@ -183,7 +199,8 @@ class ItemController
             if (isset($response['data']['errors'])) {
                 $errorsArray = is_array($response['data']['errors']) ? $response['data']['errors'] : [$response['data']['errors']];
                 $errors = array_map(function ($e) {
-                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e; }, $errorsArray);
+                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e;
+                }, $errorsArray);
                 if (!empty($errors))
                     $message .= ': ' . implode(', ', $errors);
             }
@@ -358,6 +375,20 @@ class ItemController
 
         $item = $response['data']['data'] ?? $response['data'];
 
+        // Normalize user/finder fields for views (support multiple API shapes)
+        if (empty($item['user']) || !is_array($item['user'])) {
+            $userObj = [];
+            if (!empty($response['data']['data']['user']) && is_array($response['data']['data']['user'])) {
+                $userObj = $response['data']['data']['user'];
+            }
+            $userObj['first_name'] = $userObj['first_name'] ?? ($item['first_name'] ?? $item['user_first_name'] ?? $item['found_by_first_name'] ?? $item['finder_first_name'] ?? '');
+            $userObj['last_name'] = $userObj['last_name'] ?? ($item['last_name'] ?? $item['user_last_name'] ?? $item['found_by_last_name'] ?? $item['finder_last_name'] ?? '');
+            $userObj['name'] = $userObj['name'] ?? ($item['name'] ?? $item['user_name'] ?? $item['found_by_name'] ?? $item['finder_name'] ?? trim(($userObj['first_name'] ?? '') . ' ' . ($userObj['last_name'] ?? '')));
+            $userObj['school_id'] = $userObj['school_id'] ?? ($item['school_id'] ?? $item['user_school_id'] ?? $item['found_by_school_id'] ?? $item['finder_school_id'] ?? null);
+            $userObj['email'] = $userObj['email'] ?? ($item['email'] ?? $item['found_by_email'] ?? $item['finder_email'] ?? null);
+            $item['user'] = $userObj;
+        }
+
         // Get potential matches if logged in and user owns the item
         $matches = [];
         if (isLoggedIn()) {
@@ -474,7 +505,8 @@ class ItemController
             if (isset($response['data']['errors'])) {
                 $errorsArray = is_array($response['data']['errors']) ? $response['data']['errors'] : [$response['data']['errors']];
                 $errors = array_map(function ($e) {
-                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e; }, $errorsArray);
+                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e;
+                }, $errorsArray);
                 if (!empty($errors))
                     $message .= ': ' . implode(', ', $errors);
             }

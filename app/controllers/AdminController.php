@@ -781,6 +781,20 @@ class AdminController
 
         $item = $response['data']['data'] ?? $response['data'];
 
+        // Normalize reporter info for admin views
+        if (empty($item['user']) || !is_array($item['user'])) {
+            $u = [];
+            if (!empty($response['data']['data']['user']) && is_array($response['data']['data']['user'])) {
+                $u = $response['data']['data']['user'];
+            }
+            $u['first_name'] = $u['first_name'] ?? ($item['first_name'] ?? $item['user_first_name'] ?? $item['reported_by_first_name'] ?? '');
+            $u['last_name'] = $u['last_name'] ?? ($item['last_name'] ?? $item['user_last_name'] ?? $item['reported_by_last_name'] ?? '');
+            $u['name'] = $u['name'] ?? ($item['name'] ?? $item['user_name'] ?? $item['reported_by_name'] ?? trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? '')));
+            $u['school_id'] = $u['school_id'] ?? ($item['school_id'] ?? $item['user_school_id'] ?? $item['reported_by_school_id'] ?? null);
+            $u['email'] = $u['email'] ?? ($item['email'] ?? $item['reporter_email'] ?? null);
+            $item['user'] = $u;
+        }
+
         // Get potential matches if logged in and user owns the item
         $matches = [];
         if (isLoggedIn()) {
@@ -805,6 +819,20 @@ class AdminController
         }
 
         $item = $response['data']['data'] ?? $response['data'];
+
+        // Normalize finder info for admin views
+        if (empty($item['user']) || !is_array($item['user'])) {
+            $u = [];
+            if (!empty($response['data']['data']['user']) && is_array($response['data']['data']['user'])) {
+                $u = $response['data']['data']['user'];
+            }
+            $u['first_name'] = $u['first_name'] ?? ($item['first_name'] ?? $item['user_first_name'] ?? $item['found_by_first_name'] ?? $item['finder_first_name'] ?? '');
+            $u['last_name'] = $u['last_name'] ?? ($item['last_name'] ?? $item['user_last_name'] ?? $item['found_by_last_name'] ?? $item['finder_last_name'] ?? '');
+            $u['name'] = $u['name'] ?? ($item['name'] ?? $item['user_name'] ?? $item['found_by_name'] ?? $item['finder_name'] ?? trim(($u['first_name'] ?? '') . ' ' . ($u['last_name'] ?? '')));
+            $u['school_id'] = $u['school_id'] ?? ($item['school_id'] ?? $item['user_school_id'] ?? $item['found_by_school_id'] ?? $item['finder_school_id'] ?? null);
+            $u['email'] = $u['email'] ?? ($item['email'] ?? $item['found_by_email'] ?? $item['finder_email'] ?? null);
+            $item['user'] = $u;
+        }
 
         // Get potential matches if logged in and user owns the item
         $matches = [];

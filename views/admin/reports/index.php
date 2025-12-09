@@ -121,7 +121,6 @@
                 try {
                     // If server didn't embed category data, attempt to fetch JSON endpoint as fallback
                     if (!rawCategory || rawCategory.length === 0) {
-                        console.debug('rawCategory empty, fetching /admin/reports/by-category as JSON');
                         const res = await fetch('<?= APP_URL ?>/admin/reports/by-category', { headers: { 'Accept': 'application/json' } });
                         if (res.ok) {
                             const json = await res.json();
@@ -133,7 +132,6 @@
                     }
 
                     if (!rawLocation || rawLocation.length === 0) {
-                        console.debug('rawLocation empty, fetching /admin/reports/by-location as JSON');
                         const res = await fetch('<?= APP_URL ?>/admin/reports/by-location', { headers: { 'Accept': 'application/json' } });
                         if (res.ok) {
                             const json = await res.json();
@@ -152,7 +150,6 @@
                     let foundSeries = (processed || []).map(r => ({ date: r.date, value: r.found || 0 }));
 
                     if ((!lostSeries || lostSeries.length === 0) && (!foundSeries || foundSeries.length === 0)) {
-                        console.debug('No processed trends embedded — attempting to fetch /admin/reports/trends as JSON');
                         try {
                             const resT = await fetch('<?= APP_URL ?>/admin/reports/trends?days=30', { headers: { 'Accept': 'application/json' } });
                             if (resT.ok) {
@@ -186,8 +183,6 @@
                     renderMultiLineChart('#reportsTrendsMulti', multiSeries, {});
                     // register for responsive redraw
                     registerChartRerender('#reportsTrendsMulti', () => renderMultiLineChart('#reportsTrendsMulti', multiSeries, {}), []);
-
-                    console.debug('Charts rendered — category', rawCategory && rawCategory.length, 'location', rawLocation && rawLocation.length, 'lostSeries', lostSeries && lostSeries.length, 'foundSeries', foundSeries && foundSeries.length);
                 } catch (err) {
                     console.error('Failed to load/ render admin reports', err);
                 }

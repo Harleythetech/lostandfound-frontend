@@ -243,9 +243,11 @@ $matchesCount = getStatCount($stats, ['matches', 'potentialMatches']);
                                             </div>
                                             <div class="card-body p-3">
                                                 <h6 class="card-title mb-1 text-truncate text-dark">
-                                                    <?= htmlspecialchars($item['title'] ?? '') ?></h6>
+                                                    <?= htmlspecialchars($item['title'] ?? '') ?>
+                                                </h6>
                                                 <p class="card-text small text-muted mb-2 text-truncate">
-                                                    <?= htmlspecialchars($item['description'] ?? '') ?></p>
+                                                    <?= sanitizeForDisplay($item['description'] ?? '') ?>
+                                                </p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <small class="text-muted">
                                                         <i
@@ -307,9 +309,11 @@ $matchesCount = getStatCount($stats, ['matches', 'potentialMatches']);
                                             </div>
                                             <div class="card-body p-3">
                                                 <h6 class="card-title mb-1 text-truncate text-dark">
-                                                    <?= htmlspecialchars($item['title'] ?? '') ?></h6>
+                                                    <?= htmlspecialchars($item['title'] ?? '') ?>
+                                                </h6>
                                                 <p class="card-text small text-muted mb-2 text-truncate">
-                                                    <?= htmlspecialchars($item['description'] ?? '') ?></p>
+                                                    <?= sanitizeForDisplay($item['description'] ?? '') ?>
+                                                </p>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <small class="text-muted">
                                                         <i

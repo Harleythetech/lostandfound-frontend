@@ -52,7 +52,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                 </a>
                 <div>
                     <h5 class="fw-bold mb-0">Claim #<?= $claim['id'] ?></h5>
-                    <small class="text-muted">Submitted <?= formatDate($claim['created_at'] ?? '', 'F j, Y \a\t g:i A') ?></small>
+                    <small class="text-muted">Submitted
+                        <?= formatDate($claim['created_at'] ?? '', 'F j, Y \a\t g:i A') ?></small>
                 </div>
             </div>
             <span class="badge <?= $statusInfo['class'] ?> fs-6 px-3 py-2">
@@ -76,10 +77,12 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             <div class="col-md-4">
                                 <?php if ($itemImageSrc): ?>
                                     <a href="<?= htmlspecialchars($itemImageSrc) ?>" target="_blank">
-                                        <img src="<?= htmlspecialchars($itemImageSrc) ?>" class="img-fluid rounded" alt="Item Image">
+                                        <img src="<?= htmlspecialchars($itemImageSrc) ?>" class="img-fluid rounded"
+                                            alt="Item Image">
                                     </a>
                                 <?php else: ?>
-                                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                        style="height: 150px;">
                                         <i class="bi bi-image text-muted display-4"></i>
                                     </div>
                                 <?php endif; ?>
@@ -87,8 +90,11 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                     <div class="row g-1 mt-2">
                                         <?php foreach (array_slice($itemImages, 1, 3) as $img): ?>
                                             <div class="col-4">
-                                                <a href="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>" target="_blank">
-                                                    <img src="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($img['file_name'] ?? 'Item image') ?>">
+                                                <a href="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>"
+                                                    target="_blank">
+                                                    <img src="<?= htmlspecialchars(normalizeImageUrl($img['url'] ?? '')) ?>"
+                                                        class="img-fluid rounded border"
+                                                        alt="<?= htmlspecialchars($img['file_name'] ?? 'Item image') ?>">
                                                 </a>
                                             </div>
                                         <?php endforeach; ?>
@@ -101,9 +107,12 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                 <?php endif; ?>
                             </div>
                             <div class="col-md-8">
-                                <h5 class="fw-bold mb-2"><?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?></h5>
-                                <p class="text-muted small mb-3"><?= htmlspecialchars($claim['item_description'] ?? '') ?></p>
-                                
+                                <h5 class="fw-bold mb-2"><?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?>
+                                </h5>
+                                <p class="text-muted small mb-3">
+                                    <?= sanitizeForDisplay($claim['item_description'] ?? '') ?>
+                                </p>
+
                                 <div class="row g-2 small">
                                     <div class="col-6">
                                         <span class="text-muted">Category:</span><br>
@@ -125,27 +134,30 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                         </strong>
                                     </div>
                                     <?php if (!empty($claim['item_unique_identifiers'])): ?>
-                                    <div class="col-12">
-                                        <span class="text-muted">Unique Identifiers:</span><br>
-                                        <strong><?= htmlspecialchars($claim['item_unique_identifiers']) ?></strong>
-                                    </div>
+                                        <div class="col-12">
+                                            <span class="text-muted">Unique Identifiers:</span><br>
+                                            <strong><?= htmlspecialchars($claim['item_unique_identifiers']) ?></strong>
+                                        </div>
                                     <?php endif; ?>
                                     <?php if (!empty($claim['storage_notes'])): ?>
-                                    <div class="col-12">
-                                        <span class="text-muted">Storage Notes:</span><br>
-                                        <span class="text-info"><?= htmlspecialchars($claim['storage_notes']) ?></span>
-                                    </div>
+                                        <div class="col-12">
+                                            <span class="text-muted">Storage Notes:</span><br>
+                                            <span class="text-info"><?= htmlspecialchars($claim['storage_notes']) ?></span>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
-                                
+
                                 <div class="mt-3">
-                                    <span class="badge <?= getStatusBadgeClass($claim['item_status'] ?? 'pending') ?> me-2">
+                                    <span
+                                        class="badge <?= getStatusBadgeClass($claim['item_status'] ?? 'pending') ?> me-2">
                                         Item: <?= ucfirst($claim['item_status'] ?? 'pending') ?>
                                     </span>
                                     <?php if (!empty($claim['item_condition'])): ?>
-                                        <span class="badge bg-info"><?= ucfirst($claim['item_condition']) ?> condition</span>
+                                        <span class="badge bg-info"><?= ucfirst($claim['item_condition']) ?>
+                                            condition</span>
                                     <?php endif; ?>
-                                    <a href="<?= APP_URL ?>/admin/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                                    <a href="<?= APP_URL ?>/admin/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>"
+                                        target="_blank" class="btn btn-sm btn-outline-primary ms-2">
                                         <i class="bi bi-eye me-1"></i>View Full Item
                                     </a>
                                 </div>
@@ -157,35 +169,44 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                 <!-- Claim Description -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-transparent border-0 py-3">
-                        <h6 class="mb-0 fw-bold"><i class="bi bi-chat-left-text me-2 text-primary"></i>Claim Description</h6>
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-chat-left-text me-2 text-primary"></i>Claim Description
+                        </h6>
                     </div>
                     <div class="card-body">
-                        <p class="mb-0"><?= nl2br(htmlspecialchars($claim['description'] ?? 'No description provided')) ?></p>
+                        <p class="mb-0">
+                            <?= nl2br(sanitizeForDisplay($claim['description'] ?? 'No description provided')) ?>
+                        </p>
                     </div>
                 </div>
 
                 <!-- Proof of Ownership -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-transparent border-0 py-3">
-                        <h6 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>Proof of Ownership</h6>
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-shield-check me-2 text-primary"></i>Proof of Ownership
+                        </h6>
                     </div>
                     <div class="card-body">
                         <div class="alert alert-light border mb-3">
                             <strong class="small">Claimant's Statement:</strong>
-                            <p class="mb-0 mt-2"><?= nl2br(htmlspecialchars($claim['proof_details'] ?? 'No proof details provided')) ?></p>
+                            <p class="mb-0 mt-2">
+                                <?= nl2br(sanitizeForDisplay($claim['proof_details'] ?? 'No proof details provided')) ?>
+                            </p>
                         </div>
-                        
+
                         <?php if (!empty($proofImages)): ?>
                             <strong class="small d-block mb-2">Proof Images (<?= count($proofImages) ?>):</strong>
                             <div class="row g-2">
                                 <?php foreach ($proofImages as $image): ?>
                                     <?php $proofImgUrl = normalizeImageUrl($image['url'] ?? ''); ?>
                                     <div class="col-4 col-md-3">
-                                        <a href="<?= htmlspecialchars($proofImgUrl) ?>" target="_blank" title="<?= htmlspecialchars($image['description'] ?? $image['file_name'] ?? 'Proof image') ?>">
-                                            <img src="<?= htmlspecialchars($proofImgUrl) ?>" class="img-fluid rounded border" alt="<?= htmlspecialchars($image['file_name'] ?? 'Proof image') ?>">
+                                        <a href="<?= htmlspecialchars($proofImgUrl) ?>" target="_blank"
+                                            title="<?= htmlspecialchars($image['description'] ?? $image['file_name'] ?? 'Proof image') ?>">
+                                            <img src="<?= htmlspecialchars($proofImgUrl) ?>" class="img-fluid rounded border"
+                                                alt="<?= htmlspecialchars($image['file_name'] ?? 'Proof image') ?>">
                                         </a>
                                         <?php if (!empty($image['description'])): ?>
-                                            <small class="text-muted d-block text-truncate" title="<?= htmlspecialchars($image['description']) ?>">
+                                            <small class="text-muted d-block text-truncate"
+                                                title="<?= htmlspecialchars($image['description']) ?>">
                                                 <?= htmlspecialchars($image['description']) ?>
                                             </small>
                                         <?php endif; ?>
@@ -210,10 +231,10 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                         <div class="card-body">
                             <?php if ($currentStatus === 'rejected'): ?>
                                 <div class="alert alert-danger mb-0">
-                                    <?= nl2br(htmlspecialchars($claim['rejection_reason'] ?? '')) ?>
+                                    <?= nl2br(sanitizeForDisplay($claim['rejection_reason'] ?? '')) ?>
                                 </div>
                             <?php else: ?>
-                                <p class="mb-0"><?= nl2br(htmlspecialchars($claim['verification_notes'] ?? '')) ?></p>
+                                <p class="mb-0"><?= nl2br(sanitizeForDisplay($claim['verification_notes'] ?? '')) ?></p>
                             <?php endif; ?>
                             <?php if (!empty($claim['verified_at'])): ?>
                                 <small class="text-muted d-block mt-2">
@@ -237,7 +258,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                     </div>
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white me-3" style="width: 48px; height: 48px;">
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white me-3"
+                                style="width: 48px; height: 48px;">
                                 <?= strtoupper(substr($claim['claimant_first_name'] ?? 'U', 0, 1) . substr($claim['claimant_last_name'] ?? '', 0, 1)) ?>
                             </div>
                             <div>
@@ -261,19 +283,83 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                 </div>
 
                 <!-- Finder Info -->
-                <?php if (!empty($claim['finder_name']) || !empty($claim['finder_first_name'])): ?>
+                <?php
+                // Normalize possible API shapes for finder info
+                $finderName = '';
+                $finderFirst = $claim['finder_first_name'] ?? '';
+                $finderLast = $claim['finder_last_name'] ?? '';
+                // Root-level fallbacks (some endpoints return flattened fields)
+                $rootFirst = $claim['first_name'] ?? '';
+                $rootLast = $claim['last_name'] ?? '';
+                $rootSchool = $claim['school_id'] ?? null;
+                $rootEmail = $claim['email'] ?? null;
+                $rootUserId = $claim['user_id'] ?? null;
+
+                if (!empty($claim['finder_name'])) {
+                    $finderName = $claim['finder_name'];
+                } elseif (!empty($finderFirst) || !empty($finderLast)) {
+                    $finderName = trim($finderFirst . ' ' . $finderLast);
+                } elseif (!empty($claim['finder']) && is_array($claim['finder'])) {
+                    $f = $claim['finder'];
+                    $finderName = $f['name'] ?? trim(($f['first_name'] ?? '') . ' ' . ($f['last_name'] ?? ''));
+                } elseif (!empty($claim['finder_user']) && is_array($claim['finder_user'])) {
+                    $f = $claim['finder_user'];
+                    $finderName = $f['name'] ?? trim(($f['first_name'] ?? '') . ' ' . ($f['last_name'] ?? ''));
+                } elseif (!empty($rootFirst) || !empty($rootLast)) {
+                    $finderName = trim($rootFirst . ' ' . $rootLast);
+                }
+
+                // Gather metadata fallbacks from claim root and nested structures
+                $finderSchool = $claim['finder_school_id'] ?? ($claim['finder']['school_id'] ?? ($claim['finder_user']['school_id'] ?? $rootSchool));
+                $finderEmail = $claim['finder_email'] ?? ($claim['finder']['email'] ?? ($claim['finder_user']['email'] ?? $rootEmail ?? ($claim['email'] ?? null)));
+                $finderContact = $claim['finder_contact'] ?? ($claim['finder']['contact'] ?? ($claim['finder_user']['contact'] ?? ($claim['finder']['phone'] ?? null)));
+                $finderUserId = $claim['finder_user_id'] ?? ($claim['finder']['id'] ?? ($claim['finder_user']['id'] ?? $rootUserId));
+
+                // Final metadata fallback that consolidates multiple possible sources
+                $finalFinderMeta = null;
+                if (!empty($finderSchool)) {
+                    $finalFinderMeta = htmlspecialchars($finderSchool);
+                } elseif (!empty($claim['school_id'])) {
+                    $finalFinderMeta = htmlspecialchars($claim['school_id']);
+                } elseif (!empty($finderEmail)) {
+                    $finalFinderMeta = '<i class="bi bi-envelope me-1"></i> ' . htmlspecialchars($finderEmail);
+                } elseif (!empty($claim['email'])) {
+                    $finalFinderMeta = '<i class="bi bi-envelope me-1"></i> ' . htmlspecialchars($claim['email']);
+                } elseif (!empty($finderContact)) {
+                    $finalFinderMeta = '<i class="bi bi-telephone me-1"></i> ' . htmlspecialchars($finderContact);
+                } elseif (!empty($claim['found_item']['school_id'])) {
+                    $finalFinderMeta = htmlspecialchars($claim['found_item']['school_id']);
+                } elseif (!empty($claim['found_item']['email'])) {
+                    $finalFinderMeta = '<i class="bi bi-envelope me-1"></i> ' . htmlspecialchars($claim['found_item']['email']);
+                }
+                ?>
+                <?php if (!empty($finderName)): ?>
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-header bg-transparent border-0 py-3">
                             <h6 class="mb-0 fw-bold"><i class="bi bi-person-check me-2 text-success"></i>Finder</h6>
                         </div>
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="rounded-circle bg-success d-flex align-items-center justify-content-center text-white me-3" style="width: 48px; height: 48px;">
-                                    <?= strtoupper(substr($claim['finder_first_name'] ?? 'U', 0, 1) . substr($claim['finder_last_name'] ?? '', 0, 1)) ?>
+                                <div class="rounded-circle bg-success d-flex align-items-center justify-content-center text-white me-3"
+                                    style="width: 48px; height: 48px;">
+                                    <?= strtoupper(substr(($finderName ?? '') ?: 'U', 0, 1)) ?>
                                 </div>
                                 <div>
-                                    <strong><?= htmlspecialchars($claim['finder_name'] ?? (($claim['finder_first_name'] ?? '') . ' ' . ($claim['finder_last_name'] ?? ''))) ?></strong>
-                                    <small class="d-block text-muted"><?= $claim['finder_school_id'] ?? 'N/A' ?></small>
+                                    <strong><?= sanitizeForDisplay($finderName) ?></strong>
+                                    <?php if (!empty($finderSchool) || !empty($finderEmail) || !empty($finderContact) || !empty($finderUserId)): ?>
+                                        <small class="d-block text-muted">
+                                            <?php if (!empty($finderSchool)): ?>
+                                                <?= htmlspecialchars($finderSchool) ?>
+                                            <?php elseif (!empty($finderEmail)): ?>
+                                                <i class="bi bi-envelope me-1"></i> <?= htmlspecialchars($finderEmail) ?>
+                                            <?php elseif (!empty($finderContact)): ?>
+                                                <i class="bi bi-telephone me-1"></i> <?= htmlspecialchars($finderContact) ?>
+                                            <?php elseif (!empty($finderUserId)): ?>
+                                                <a href="<?= APP_URL ?>/admin/users/<?= htmlspecialchars($finderUserId) ?>">View
+                                                    profile</a>
+                                            <?php endif; ?>
+                                        </small>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -319,16 +405,16 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                 <strong>Date:</strong> <?= formatDate($claim['picked_up_at'], 'M j, Y \a\t g:i A') ?>
                             </div>
                             <?php if (!empty($claim['picked_up_by_name'])): ?>
-                            <div class="mb-2">
-                                <i class="bi bi-person me-2 text-muted"></i>
-                                <strong>Picked up by:</strong> <?= htmlspecialchars($claim['picked_up_by_name']) ?>
-                            </div>
+                                <div class="mb-2">
+                                    <i class="bi bi-person me-2 text-muted"></i>
+                                    <strong>Picked up by:</strong> <?= htmlspecialchars($claim['picked_up_by_name']) ?>
+                                </div>
                             <?php endif; ?>
                             <?php if (!empty($claim['id_presented'])): ?>
-                            <div>
-                                <i class="bi bi-card-text me-2 text-muted"></i>
-                                <strong>ID Presented:</strong> <?= htmlspecialchars($claim['id_presented']) ?>
-                            </div>
+                                <div>
+                                    <i class="bi bi-card-text me-2 text-muted"></i>
+                                    <strong>ID Presented:</strong> <?= htmlspecialchars($claim['id_presented']) ?>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -347,7 +433,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/approve" method="POST">
                                 <div class="mb-3">
                                     <label class="form-label small">Verification Notes</label>
-                                    <textarea name="verification_notes" class="form-control" rows="2" placeholder="e.g., Serial number verified, description matches..."></textarea>
+                                    <textarea name="verification_notes" class="form-control" rows="2"
+                                        placeholder="e.g., Serial number verified, description matches..."></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Schedule Pickup Date</label>
@@ -374,10 +461,13 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                         <div class="card-body">
                             <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/reject" method="POST">
                                 <div class="mb-3">
-                                    <label class="form-label small">Rejection Reason <span class="text-danger">*</span></label>
-                                    <textarea name="rejection_reason" class="form-control" rows="3" required minlength="10" placeholder="Provide a detailed reason for rejection (min 10 characters)..."></textarea>
+                                    <label class="form-label small">Rejection Reason <span
+                                            class="text-danger">*</span></label>
+                                    <textarea name="rejection_reason" class="form-control" rows="3" required minlength="10"
+                                        placeholder="Provide a detailed reason for rejection (min 10 characters)..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to reject this claim?')">
+                                <button type="submit" class="btn btn-danger w-100"
+                                    onclick="return confirm('Are you sure you want to reject this claim?')">
                                     <i class="bi bi-x-lg me-2"></i>Reject Claim
                                 </button>
                             </form>
@@ -396,14 +486,16 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/schedule" method="POST">
                                 <div class="mb-3">
                                     <label class="form-label small">Pickup Date</label>
-                                    <input type="date" name="pickup_date" class="form-control" min="<?= date('Y-m-d') ?>" required>
+                                    <input type="date" name="pickup_date" class="form-control" min="<?= date('Y-m-d') ?>"
+                                        required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">Pickup Time</label>
                                     <input type="time" name="pickup_time" class="form-control" value="10:00" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">
-                                    <i class="bi bi-calendar-check me-2"></i><?= !empty($claim['pickup_scheduled']) ? 'Reschedule' : 'Schedule' ?>
+                                    <i
+                                        class="bi bi-calendar-check me-2"></i><?= !empty($claim['pickup_scheduled']) ? 'Reschedule' : 'Schedule' ?>
                                 </button>
                             </form>
                         </div>
@@ -420,17 +512,18 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/pickup" method="POST">
                                 <div class="mb-3">
                                     <label class="form-label small">Picked Up By <span class="text-danger">*</span></label>
-                                    <input type="text" name="picked_up_by_name" class="form-control" required 
-                                           value="<?= htmlspecialchars($claim['claimant_name'] ?? (($claim['claimant_first_name'] ?? '') . ' ' . ($claim['claimant_last_name'] ?? ''))) ?>"
-                                           placeholder="Name of person picking up">
+                                    <input type="text" name="picked_up_by_name" class="form-control" required
+                                        value="<?= htmlspecialchars($claim['claimant_name'] ?? (($claim['claimant_first_name'] ?? '') . ' ' . ($claim['claimant_last_name'] ?? ''))) ?>"
+                                        placeholder="Name of person picking up">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label small">ID Presented</label>
-                                    <input type="text" name="id_presented" class="form-control" 
-                                           value="<?= htmlspecialchars($claim['claimant_school_id'] ?? '') ?>"
-                                           placeholder="School ID or other ID presented">
+                                    <input type="text" name="id_presented" class="form-control"
+                                        value="<?= htmlspecialchars($claim['claimant_school_id'] ?? '') ?>"
+                                        placeholder="School ID or other ID presented">
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100" onclick="return confirm('Confirm item handover? This action cannot be undone.')">
+                                <button type="submit" class="btn btn-primary w-100"
+                                    onclick="return confirm('Confirm item handover? This action cannot be undone.')">
                                     <i class="bi bi-check2-all me-2"></i>Complete Handover
                                 </button>
                             </form>
@@ -445,7 +538,9 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             </div>
                             <h5 class="text-success fw-bold">Item Handed Over</h5>
                             <?php if (!empty($claim['picked_up_by_name'])): ?>
-                                <p class="mb-1">Picked up by: <strong><?= htmlspecialchars($claim['picked_up_by_name']) ?></strong></p>
+                                <p class="mb-1">Picked up by:
+                                    <strong><?= htmlspecialchars($claim['picked_up_by_name']) ?></strong>
+                                </p>
                             <?php endif; ?>
                             <?php if (!empty($claim['id_presented'])): ?>
                                 <p class="mb-1 small text-muted">ID: <?= htmlspecialchars($claim['id_presented']) ?></p>
@@ -467,11 +562,13 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                     <div class="card-body">
                         <div class="d-grid gap-2">
                             <?php if (!empty($claim['claimant_user_id'])): ?>
-                            <a href="<?= APP_URL ?>/admin/users/<?= $claim['claimant_user_id'] ?>" class="btn btn-outline-secondary btn-sm">
-                                <i class="bi bi-person me-2"></i>View Claimant Profile
-                            </a>
+                                <a href="<?= APP_URL ?>/admin/users/<?= $claim['claimant_user_id'] ?>"
+                                    class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-person me-2"></i>View Claimant Profile
+                                </a>
                             <?php endif; ?>
-                            <a href="<?= APP_URL ?>/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>" class="btn btn-outline-secondary btn-sm" target="_blank">
+                            <a href="<?= APP_URL ?>/admin/found-items/<?= $claim['item_id'] ?? $claim['found_item_id'] ?>"
+                                class="btn btn-outline-secondary btn-sm" target="_blank">
                                 <i class="bi bi-box-seam me-2"></i>View Found Item Page
                             </a>
                             <a href="<?= APP_URL ?>/admin/claims" class="btn btn-outline-primary btn-sm">

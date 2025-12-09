@@ -128,7 +128,7 @@
                         <!-- Claim Description -->
                         <div class="mb-3">
                             <small class="text-muted d-block mb-1">Why This Is Your Item</small>
-                            <p class="mb-0"><?= nl2br(htmlspecialchars($claim['description'] ?? '')) ?></p>
+                            <p class="mb-0"><?= nl2br(sanitizeForDisplay($claim['description'] ?? '')) ?></p>
                         </div>
 
                         <!-- Proof Images -->
@@ -221,7 +221,7 @@
                     <div class="card-body p-3">
                         <h6 class="mb-1"><?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?></h6>
                         <p class="text-muted small mb-2 text-truncate">
-                            <?= htmlspecialchars($claim['item_description'] ?? '') ?>
+                            <?= sanitizeForDisplay($claim['item_description'] ?? '') ?>
                         </p>
                         <?php if (!empty($claim['category_name'])): ?>
                             <span class="badge bg-light text-dark me-1"><i
@@ -242,6 +242,19 @@
 
                 <!-- Actions -->
                 <?php
+                // Determine finder display name with fallbacks for different API shapes
+                $finderName = '';
+                if (!empty($claim['finder_name'])) {
+                    $finderName = $claim['finder_name'];
+                } elseif (!empty($claim['finder_first_name']) || !empty($claim['finder_last_name'])) {
+                    $finderName = trim(($claim['finder_first_name'] ?? '') . ' ' . ($claim['finder_last_name'] ?? ''));
+                } elseif (!empty($claim['finder']) && is_array($claim['finder'])) {
+                    $f = $claim['finder'];
+                    $finderName = $f['name'] ?? trim(($f['first_name'] ?? '') . ' ' . ($f['last_name'] ?? ''));
+                }
+
+                $finderSchool = $claim['finder_school_id'] ?? ($claim['finder']['school_id'] ?? null);
+
                 $isOwner = ($claim['claimant_id'] ?? $claim['user_id'] ?? 0) == ($user['id'] ?? -1);
                 $isFinder = ($claim['finder_id'] ?? 0) == ($user['id'] ?? -1);
                 ?>
@@ -268,13 +281,12 @@
                             <h6 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Contact</h6>
                         </div>
                         <div class="card-body">
-                            <?php if ($isOwner && !empty($claim['finder_name'])): ?>
+                            <?php if ($isOwner && !empty($finderName)): ?>
                                 <p class="mb-1"><strong>Finder:</strong></p>
-                                <p class="mb-1"><?= htmlspecialchars($claim['finder_name']) ?></p>
-                                <?php if (!empty($claim['finder_school_id'])): ?>
+                                <p class="mb-1"><?= sanitizeForDisplay($finderName) ?></p>
+                                <?php if (!empty($finderSchool)): ?>
                                     <p class="mb-0 small text-muted"><i
-                                            class="bi bi-person-badge me-1"></i><?= htmlspecialchars($claim['finder_school_id']) ?>
-                                    </p>
+                                            class="bi bi-person-badge me-1"></i><?= htmlspecialchars($finderSchool) ?></p>
                                 <?php endif; ?>
                             <?php elseif ($isFinder): ?>
                                 <p class="mb-1"><strong>Claimant:</strong></p>

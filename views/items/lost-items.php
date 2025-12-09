@@ -124,9 +124,11 @@
                             </div>
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1 text-truncate text-dark">
-                                    <?= htmlspecialchars($item['title'] ?? '') ?></h6>
+                                    <?= htmlspecialchars($item['title'] ?? '') ?>
+                                </h6>
                                 <p class="card-text text-muted small mb-2 text-truncate">
-                                    <?= htmlspecialchars($item['description'] ?? '') ?></p>
+                                    <?= sanitizeForDisplay($item['description'] ?? '') ?>
+                                </p>
                                 <div class="d-flex justify-content-between align-items-center text-muted small">
                                     <span><i
                                             class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($item['last_seen_location'] ?? 'N/A') ?></span>
