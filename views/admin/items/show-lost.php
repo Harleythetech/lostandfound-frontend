@@ -160,16 +160,16 @@
 
                         <!-- Actions -->
                         <div class="d-grid gap-2">
-                            <?php if (isLoggedIn()): ?>
-                                <?php if (isAdmin()): ?>
-                                    <a href="<?= APP_URL ?>/admin/lost-items/<?= $item['id'] ?>" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-pencil me-2"></i>Edit Item
-                                    </a>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal">
-                                        <i class="bi bi-trash me-2"></i>Delete Item
-                                    </button>
-                                <?php elseif ($hasEmail || $hasPhone): ?>
+                            <?php if (isLoggedIn() && ((getCurrentUser()['id'] ?? null) == ($item['user_id'] ?? null))): ?>
+                                <a href="<?= APP_URL ?>/lost-items/<?= $item['id'] ?>/edit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil me-2"></i>Edit Item
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Delete Item
+                                </button>
+                            <?php elseif (isLoggedIn() && isAdmin()): ?>
+                                <?php if ($hasEmail || $hasPhone): ?>
                                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#contactModal">
                                         <i class="bi bi-chat-dots me-2"></i>Contact Owner
@@ -180,6 +180,20 @@
                                         <i class="bi bi-chat-dots me-2"></i>Contact Owner
                                     </button>
                                 <?php endif; ?>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Delete Item
+                                </button>
+                            <?php elseif (isLoggedIn() && ($hasEmail || $hasPhone)): ?>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#contactModal">
+                                    <i class="bi bi-chat-dots me-2"></i>Contact Owner
+                                </button>
+                            <?php elseif (isLoggedIn()): ?>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#noContactModal">
+                                    <i class="bi bi-chat-dots me-2"></i>Contact Owner
+                                </button>
                             <?php endif; ?>
                         </div>
                     </div>

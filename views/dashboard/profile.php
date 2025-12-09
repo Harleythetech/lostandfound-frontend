@@ -16,7 +16,7 @@
                 <p class="text-muted mb-0 small">Manage your account information and preferences</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -141,12 +141,14 @@
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Contact Name</label>
                                     <p class="mb-0 fw-medium">
-                                        <?= htmlspecialchars($user['emergency_contact_name'] ?? 'N/A') ?></p>
+                                        <?= htmlspecialchars($user['emergency_contact_name'] ?? 'N/A') ?>
+                                    </p>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label text-muted small mb-1">Contact Number</label>
                                     <p class="mb-0 fw-medium">
-                                        <?= htmlspecialchars($user['emergency_contact_number'] ?? 'N/A') ?></p>
+                                        <?= htmlspecialchars($user['emergency_contact_number'] ?? 'N/A') ?>
+                                    </p>
                                 </div>
                             </div>
                         </div>

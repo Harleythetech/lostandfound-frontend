@@ -846,4 +846,36 @@ class AdminController
 
         include __DIR__ . '/../../views/admin/items/show-found.php';
     }
+
+    public function deleteLostItem($id)
+    {
+        $this->checkSecurity();
+
+        $response = apiRequest('/lost-items/' . $id, 'DELETE', null, getToken());
+
+        if ($response['status'] === 200 || $response['status'] === 204) {
+            setFlash('success', 'Lost item deleted successfully');
+        } else {
+            $message = $response['data']['message'] ?? 'Failed to delete item';
+            setFlash('danger', $message);
+        }
+
+        redirect('/admin/lost-items');
+    }
+
+    public function deleteFoundItem($id)
+    {
+        $this->checkSecurity();
+
+        $response = apiRequest('/found-items/' . $id, 'DELETE', null, getToken());
+
+        if ($response['status'] === 200 || $response['status'] === 204) {
+            setFlash('success', 'Found item deleted successfully');
+        } else {
+            $message = $response['data']['message'] ?? 'Failed to delete item';
+            setFlash('danger', $message);
+        }
+
+        redirect('/admin/found-items');
+    }
 }

@@ -3,7 +3,11 @@
 <?php $user = getCurrentUser(); ?>
 
 <div class="dashboard-wrapper">
-    <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
+    <?php if (isAdmin()): ?>
+        <?php include __DIR__ . '/../admin/partials/sidebar.php'; ?>
+    <?php else: ?>
+        <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
+    <?php endif; ?>
 
     <main class="dashboard-main">
         <!-- Top Bar -->
@@ -19,10 +23,11 @@
                 </nav>
                 <h4 class="fw-semibold mb-0"><i
                         class="bi bi-pencil me-2 text-<?= $itemType === 'lost' ? 'danger' : 'success' ?>"></i>Edit
-                    <?= ucfirst($itemType) ?> Item</h4>
+                    <?= ucfirst($itemType) ?> Item
+                </h4>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= notificationUrl() ?>" class="btn btn-outline-secondary btn-sm position-relative">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
@@ -54,7 +59,8 @@
                                         <option value="">Select a category</option>
                                         <?php foreach ($categories as $category): ?>
                                             <option value="<?= $category['id'] ?>" <?= ($item['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($category['name'] ?? '') ?></option>
+                                                <?= htmlspecialchars($category['name'] ?? '') ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -73,8 +79,10 @@
                                         $itemLocationId = $item['location_id'] ?? $item['last_seen_location_id'] ?? '';
                                         foreach ($locations as $location): ?>
                                             <option value="<?= $location['id'] ?>" <?= $itemLocationId == $location['id'] ? 'selected' : '' ?>>
-                                                <?= htmlspecialchars($location['name'] ?? '') ?>    <?php if (!empty($location['building'])): ?>
-                                                    (<?= htmlspecialchars($location['building']) ?>)<?php endif; ?></option>
+                                                <?= htmlspecialchars($location['name'] ?? '') ?>
+                                                <?php if (!empty($location['building'])): ?>
+                                                    (<?= htmlspecialchars($location['building']) ?>)<?php endif; ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

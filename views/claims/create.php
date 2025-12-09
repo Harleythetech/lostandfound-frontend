@@ -19,7 +19,7 @@
                 <h4 class="fw-semibold mb-0"><i class="bi bi-hand-index me-2 text-warning"></i>Claim This Item</h4>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -61,7 +61,8 @@
                             <?php endif; ?>
                             <div>
                                 <h5 class="mb-2">
-                                    <?= htmlspecialchars($claimItem['title'] ?? $claimItem['item_name'] ?? '') ?></h5>
+                                    <?= htmlspecialchars($claimItem['title'] ?? $claimItem['item_name'] ?? '') ?>
+                                </h5>
                                 <p class="text-muted mb-1 small"><i
                                         class="bi bi-tag me-1"></i><?= htmlspecialchars($claimItem['category']['name'] ?? 'N/A') ?>
                                 </p>

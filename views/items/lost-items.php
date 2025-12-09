@@ -13,7 +13,7 @@
                 <p class="text-muted mb-0 small">Browse reported lost items and help reunite owners</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -43,7 +43,7 @@
                                 value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
                         </div>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <select name="category_id" class="form-select">
                             <option value="">All Categories</option>
                             <?php foreach ($categories ?? [] as $cat): ?>
@@ -55,7 +55,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <select name="location_id" class="form-select">
                             <option value="">All Locations</option>
                             <?php foreach ($locations ?? [] as $loc): ?>
@@ -67,17 +67,7 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="col-md-2">
-                        <select name="status" class="form-select">
-                            <option value="">All Status</option>
-                            <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>
-                                Pending</option>
-                            <option value="approved" <?= ($filters['status'] ?? '') === 'approved' ? 'selected' : '' ?>>
-                                Approved</option>
-                            <option value="found" <?= ($filters['status'] ?? '') === 'found' ? 'selected' : '' ?>>Found
-                            </option>
-                        </select>
-                    </div>
+                    <!-- status filter removed per UI update -->
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100"><i
                                 class="bi bi-filter me-1"></i>Filter</button>
@@ -149,7 +139,7 @@
                         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                             <li class="page-item <?= $i == $currentPage ? 'active' : '' ?>">
                                 <a class="page-link"
-                                    href="?page=<?= $i ?>&<?= http_build_query(array_diff_key($_GET, ['page' => ''])) ?>"><?= $i ?></a>
+                                    href="?page=<?= $i ?>&<?= http_build_query(array_diff_key($_GET, ['page' => '', 'status' => ''])) ?>"><?= $i ?></a>
                             </li>
                         <?php endfor; ?>
                     </ul>

@@ -151,19 +151,42 @@
                             </div>
                         </div>
 
+                        <?php
+                        // Pull contact from item first, then fall back to normalized user profile
+                        $ownerEmail = $item['email'] ?? ($item['user']['email'] ?? null);
+                        $ownerPhone = $item['phone_number'] ?? ($item['user']['phone'] ?? $item['user']['phone_number'] ?? null);
+
+                        // If item contact flags exist, respect them; otherwise allow contacting if profile contact exists
+                        $hasEmail = !empty($ownerEmail) && (($item['contact_via_email'] ?? true));
+                        $hasPhone = !empty($ownerPhone) && (($item['contact_via_phone'] ?? true));
+                        ?>
+
                         <!-- Actions -->
                         <div class="d-grid gap-2">
-                            <?php if (isLoggedIn()): ?>
-                                <?php if (isAdmin()): ?>
-                                    <a href="<?= APP_URL ?>/admin/found-items/<?= $item['id'] ?>"
-                                        class="btn btn-primary btn-sm">
-                                        <i class="bi bi-pencil me-2"></i>Edit Item
-                                    </a>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal">
-                                        <i class="bi bi-trash me-2"></i>Delete Item
+                            <?php if (isLoggedIn() && ((getCurrentUser()['id'] ?? null) == ($item['user_id'] ?? null))): ?>
+                                <a href="<?= APP_URL ?>/found-items/<?= $item['id'] ?>/edit" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-pencil me-2"></i>Edit Item
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Delete Item
+                                </button>
+                            <?php elseif (isLoggedIn() && isAdmin()): ?>
+                                <?php if ($hasEmail || $hasPhone): ?>
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#contactModal">
+                                        <i class="bi bi-chat-dots me-2"></i>Contact Finder
+                                    </button>
+                                <?php else: ?>
+                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#noContactModal">
+                                        <i class="bi bi-chat-dots me-2"></i>Contact Finder
                                     </button>
                                 <?php endif; ?>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Delete Item
+                                </button>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -224,4 +247,92 @@
     </div>
 </div>
 
+<!-- Contact Owner Modal -->
+<?php if ($hasEmail || $hasPhone): ?>
+    <div class="modal fade" id="contactModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-lines-fill me-2"></i>Contact Owner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">Choose how you'd like to contact
+                        <?= sanitizeForDisplay(explode(' ', $finderDisplay ?? 'the owner')[0]) ?>:
+                    </p>
+
+                    <?php if ($hasEmail): ?>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <i class="bi bi-envelope-fill text-primary me-2"></i>
+                                        <strong>Email</strong>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm bg-light"
+                                        value="<?= htmlspecialchars($ownerEmail) ?>" id="emailToCopy" readonly>
+                                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                                        onclick="copyToClipboard('emailToCopy', this)">
+                                        <i class="bi bi-clipboard"></i> Copy
+                                    </button>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="https://mail.google.com/mail/?view=cm&to=<?= urlencode($ownerEmail) ?>&su=<?= urlencode('Regarding the found item: ' . ($item['title'] ?? '')) ?>"
+                                        target="_blank" class="btn btn-danger btn-sm w-100">
+                                        <i class="bi bi-google me-1"></i> Open in Gmail
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($hasPhone): ?>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <div>
+                                        <i class="bi bi-phone-fill text-success me-2"></i>
+                                        <strong>Phone</strong>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-sm bg-light"
+                                        value="<?= htmlspecialchars($ownerPhone) ?>" id="phoneToCopy" readonly>
+                                    <button class="btn btn-outline-secondary btn-sm" type="button"
+                                        onclick="copyToClipboard('phoneToCopy', this)">
+                                        <i class="bi bi-clipboard"></i> Copy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(inputId, btn) {
+            const input = document.getElementById(inputId);
+            input.select();
+            input.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(input.value).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 2000);
+            });
+        }
+    </script>
+<?php endif; ?>
 <?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>

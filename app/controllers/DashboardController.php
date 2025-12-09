@@ -57,6 +57,46 @@ class DashboardController
             'tab' => $tab
         ];
 
+        // --- Fetch my matches briefly to compute a filtered matches count
+        $matchesCount = null;
+        try {
+            $matchesResp = apiRequest('/dashboard/my-matches?page=1&limit=1000', 'GET', null, getToken());
+            $matchesData = $matchesResp['data'] ?? [];
+            $matchesList = $matchesData['data'] ?? $matchesData;
+            if (!is_array($matchesList))
+                $matchesList = [];
+
+            // Apply same filtering logic as the `my-matches` view
+            $filtered = array_filter($matchesList, function ($match) {
+                $found = $match['found_item'] ?? null;
+                $status = strtolower((string) ($match['found_item']['status'] ?? $match['found_item_status'] ?? $found['status'] ?? $match['status'] ?? ''));
+                $excludeStatuses = ['completed', 'claimed', 'returned', 'reserved', 'unavailable', 'resolved'];
+                if (in_array($status, $excludeStatuses, true)) {
+                    return false;
+                }
+                $matchStatus = strtolower((string) ($match['status'] ?? ''));
+                if ($matchStatus === 'dismissed')
+                    return false;
+                $flagFields = [
+                    $found['is_claimed'] ?? null,
+                    $found['claimed'] ?? null,
+                    $match['is_claimed'] ?? null,
+                    $match['claimed'] ?? null,
+                ];
+                foreach ($flagFields as $f) {
+                    if ($f === true || $f === 1 || $f === '1' || $f === 'true')
+                        return false;
+                }
+                if (!empty($found['claimed_at']) || !empty($found['picked_up_at']) || !empty($match['picked_up_at']) || !empty($match['claimed_at'])) {
+                    return false;
+                }
+                return true;
+            });
+            $matchesCount = is_array($filtered) ? count($filtered) : 0;
+        } catch (Exception $e) {
+            $matchesCount = null;
+        }
+
         include __DIR__ . '/../../views/dashboard/index.php';
     }
 

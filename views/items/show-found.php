@@ -20,7 +20,7 @@
                 </nav>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -195,24 +195,44 @@
         </div>
 
         <!-- Potential Matches -->
-        <?php if (!empty($matches)): ?>
+        <?php
+        $validMatches = [];
+        if (!empty($matches) && is_array($matches)) {
+            foreach ($matches as $match) {
+                if (!is_array($match))
+                    continue;
+                $lost = is_array($match['lost_item'] ?? null) ? $match['lost_item'] : null;
+                if (empty($lost))
+                    continue;
+                $validMatches[] = [
+                    'lost' => $lost,
+                    'score' => intval($match['match_score'] ?? 0)
+                ];
+            }
+        }
+
+        if (count($validMatches) > 0): ?>
             <div class="card border-0 shadow-sm mt-4">
                 <div class="card-header bg-white py-3">
                     <h6 class="mb-0"><i class="bi bi-link-45deg text-primary me-2"></i>Potential Matches</h6>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <?php foreach ($matches as $match): ?>
+                        <?php foreach ($validMatches as $vm):
+                            $lost = $vm['lost'];
+                            $title = htmlspecialchars($lost['title'] ?? '');
+                            $desc = truncate($lost['description'] ?? '', 80);
+                            $score = $vm['score'];
+                            $lostId = $lost['id'] ?? '';
+                            ?>
                             <div class="col-md-4">
                                 <div class="card h-100 border">
                                     <div class="card-body p-3">
-                                        <h6 class="mb-2"><?= htmlspecialchars($match['lost_item']['title'] ?? '') ?></h6>
-                                        <p class="small text-muted mb-2">
-                                            <?= truncate($match['lost_item']['description'] ?? '', 80) ?>
-                                        </p>
+                                        <h6 class="mb-2"><?= $title ?></h6>
+                                        <p class="small text-muted mb-2"><?= $desc ?></p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-info"><?= $match['match_score'] ?? 0 ?>% Match</span>
-                                            <a href="<?= APP_URL ?>/lost-items/<?= $match['lost_item']['id'] ?>"
+                                            <span class="badge bg-info"><?= $score ?>% Match</span>
+                                            <a href="<?= APP_URL ?>/lost-items/<?= htmlspecialchars($lostId) ?>"
                                                 class="btn btn-sm btn-outline-primary">View</a>
                                         </div>
                                     </div>
@@ -220,6 +240,15 @@
                             </div>
                         <?php endforeach; ?>
                     </div>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0"><i class="bi bi-link-45deg text-primary me-2"></i>Potential Matches</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-0">No potential matches found.</p>
                 </div>
             </div>
         <?php endif; ?>

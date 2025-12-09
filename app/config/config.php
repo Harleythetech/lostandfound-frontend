@@ -291,6 +291,15 @@ function sanitizeForDisplay($text)
     return htmlspecialchars($decoded, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+// Return correct notifications URL depending on role (admin vs user)
+function notificationUrl()
+{
+    if (isAdmin()) {
+        return APP_URL . '/admin/notifications';
+    }
+    return APP_URL . '/notifications';
+}
+
 // Truncate text helper
 function truncate($text, $length = 100)
 {

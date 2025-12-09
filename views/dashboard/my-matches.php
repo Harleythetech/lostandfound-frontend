@@ -87,7 +87,7 @@ function getMatchItemImage($item, $images = null)
                 <p class="text-muted mb-0 small">Potential matches between your items and others</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>

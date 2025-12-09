@@ -44,26 +44,47 @@
                 </div>
                 <h4 class="fw-bold mb-0"><?= htmlspecialchars($item['title'] ?? 'Untitled') ?></h4>
             </div>
-            <?php if (isLoggedIn() && (getCurrentUser()['id'] ?? null) == ($item['user_id'] ?? null)): ?>
+            <?php if (isLoggedIn() && (isAdmin() || ((getCurrentUser()['id'] ?? null) == ($item['user_id'] ?? null)))): ?>
                 <div class="dropdown">
                     <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
                         data-bs-toggle="dropdown">
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="<?= APP_URL ?>/items/<?= $item['id'] ?>/edit">
-                                <i class="bi bi-pencil me-2"></i>Edit
-                            </a></li>
+                        <?php if ((getCurrentUser()['id'] ?? null) == ($item['user_id'] ?? null)): ?>
+                            <?php if (($item['status'] ?? '') === 'lost'): ?>
+                                <li>
+                                    <a class="dropdown-item" href="<?= APP_URL ?>/lost-items/<?= $item['id'] ?>/edit">
+                                        <i class="bi bi-pencil me-2"></i>Edit
+                                    </a>
+                                </li>
+                            <?php else: ?>
+                                <li>
+                                    <a class="dropdown-item" href="<?= APP_URL ?>/found-items/<?= $item['id'] ?>/edit">
+                                        <i class="bi bi-pencil me-2"></i>Edit
+                                    </a>
+                                </li>
+                            <?php endif; ?>
+                        <?php endif; ?>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li>
-                            <form action="<?= APP_URL ?>/items/<?= $item['id'] ?>/delete" method="POST" class="d-inline"
-                                onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-trash me-2"></i>Delete
-                                </button>
-                            </form>
+                            <?php if (($item['status'] ?? '') === 'lost'): ?>
+                                <form action="<?= APP_URL ?>/lost-items/<?= $item['id'] ?>/delete" method="POST"
+                                    class="d-inline" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-trash me-2"></i>Delete
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <form action="<?= APP_URL ?>/found-items/<?= $item['id'] ?>/delete" method="POST"
+                                    class="d-inline" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-trash me-2"></i>Delete
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </li>
                     </ul>
                 </div>

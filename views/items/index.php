@@ -15,7 +15,7 @@
             <div class="d-flex align-items-center gap-2">
                 <a href="<?= APP_URL ?>/items/create" class="btn btn-primary btn-sm"><i
                         class="bi bi-plus-lg me-1"></i>Report Item</a>
-                <a href="<?= APP_URL ?>/notifications" class="btn btn-outline-secondary btn-sm position-relative">
+                <a href="<?= notificationUrl() ?>" class="btn btn-outline-secondary btn-sm position-relative">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
                 </a>
@@ -110,7 +110,8 @@
                                     class="badge bg-secondary mb-2 small"><?= htmlspecialchars($item['category'] ?? 'Uncategorized') ?></span>
                                 <h6 class="card-title text-dark mb-1"><?= htmlspecialchars($item['title'] ?? 'Untitled') ?></h6>
                                 <p class="card-text text-muted small mb-2 text-truncate">
-                                    <?= sanitizeForDisplay($item['description'] ?? '') ?></p>
+                                    <?= sanitizeForDisplay($item['description'] ?? '') ?>
+                                </p>
                                 <div class="d-flex justify-content-between text-muted small">
                                     <span><i
                                             class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($item['location'] ?? 'Unknown') ?></span>

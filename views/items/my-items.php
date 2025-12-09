@@ -16,7 +16,7 @@
                 <a href="<?= APP_URL ?>/items/create" class="btn btn-primary btn-sm">
                     <i class="bi bi-plus-circle me-1"></i>Report Item
                 </a>
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>

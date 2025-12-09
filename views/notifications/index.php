@@ -3,7 +3,11 @@
 <?php $user = getCurrentUser(); ?>
 
 <div class="dashboard-wrapper">
-    <?php include __DIR__ . '/../admin/partials/sidebar.php'; ?>
+    <?php if (isAdmin()): ?>
+        <?php include __DIR__ . '/../admin/partials/sidebar.php'; ?>
+    <?php else: ?>
+        <?php include __DIR__ . '/../dashboard/partials/sidebar.php'; ?>
+    <?php endif; ?>
 
     <main class="dashboard-main">
         <!-- Top Bar -->

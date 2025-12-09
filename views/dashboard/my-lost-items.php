@@ -11,7 +11,7 @@
                 <p class="text-muted mb-0 small">Manage items you've reported as lost</p>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <a href="<?= APP_URL ?>/notifications" class="btn ui-btn-secondary btn-sm position-relative"
+                <a href="<?= notificationUrl() ?>" class="btn ui-btn-secondary btn-sm position-relative"
                     title="Notifications">
                     <i class="bi bi-bell"></i>
                     <?php if (getUnreadNotificationCount() > 0): ?><span class="notification-dot"></span><?php endif; ?>
@@ -31,26 +31,26 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <form action="<?= APP_URL ?>/dashboard/my-lost-items" method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" id="status" name="status">
-                            <option value="">All Status</option>
-                            <option value="pending" <?= ($filters['status'] ?? '') === 'pending' ? 'selected' : '' ?>>
-                                Pending Approval</option>
-                            <option value="approved" <?= ($filters['status'] ?? '') === 'approved' ? 'selected' : '' ?>>
-                                Approved</option>
-                            <option value="matched" <?= ($filters['status'] ?? '') === 'matched' ? 'selected' : '' ?>>
-                                Matched</option>
-                            <option value="claimed" <?= ($filters['status'] ?? '') === 'claimed' ? 'selected' : '' ?>>
-                                Claimed</option>
-                            <option value="expired" <?= ($filters['status'] ?? '') === 'expired' ? 'selected' : '' ?>>
-                                Expired</option>
-                        </select>
-                    </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <label for="search" class="form-label">Search</label>
                         <input type="text" class="form-control" id="search" name="search"
                             value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" placeholder="Search items...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="pending" <?= (($_GET['status'] ?? '') === 'pending') ? 'selected' : '' ?>>
+                                Pending</option>
+                            <option value="approved" <?= (($_GET['status'] ?? '') === 'approved') ? 'selected' : '' ?>>
+                                Approved</option>
+                            <option value="matched" <?= (($_GET['status'] ?? '') === 'matched') ? 'selected' : '' ?>>
+                                Matched</option>
+                            <option value="claimed" <?= (($_GET['status'] ?? '') === 'claimed') ? 'selected' : '' ?>>
+                                Claimed</option>
+                            <option value="expired" <?= (($_GET['status'] ?? '') === 'expired') ? 'selected' : '' ?>>
+                                Expired</option>
+                        </select>
                     </div>
                     <div class="col-md-3 d-flex align-items-end">
                         <button type="submit" class="btn btn-outline-primary w-100">
@@ -179,8 +179,8 @@
                     $currentPage = $items['pagination']['currentPage'] ?? 1;
                     $totalPages = $items['pagination']['totalPages'] ?? 1;
                     $baseUrl = '/dashboard/my-lost-items?' . http_build_query(array_filter([
-                        'status' => $filters['status'] ?? '',
-                        'search' => $_GET['search'] ?? ''
+                        'search' => $_GET['search'] ?? '',
+                        'status' => $_GET['status'] ?? ''
                     ]));
                     ?>
 
