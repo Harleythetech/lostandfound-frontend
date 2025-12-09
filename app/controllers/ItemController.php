@@ -199,10 +199,28 @@ class ItemController
             if (isset($response['data']['errors'])) {
                 $errorsArray = is_array($response['data']['errors']) ? $response['data']['errors'] : [$response['data']['errors']];
                 $errors = array_map(function ($e) {
-                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e;
+                    if (is_array($e)) {
+                        // Prefer API-friendly keys
+                        if (!empty($e['message']))
+                            return $e['message'];
+                        if (!empty($e['msg']))
+                            return $e['msg'];
+                        // Some validators return objects with path/value/msg
+                        if (!empty($e['path']) && !empty($e['msg'])) {
+                            return ucfirst($e['path']) . ': ' . $e['msg'];
+                        }
+                        if (!empty($e['value']) && !empty($e['msg'])) {
+                            return htmlspecialchars((string) $e['value']) . ': ' . $e['msg'];
+                        }
+                        // Fallback to a generic notice
+                        return 'Invalid input';
+                    }
+                    return (string) $e;
                 }, $errorsArray);
-                if (!empty($errors))
-                    $message .= ': ' . implode(', ', $errors);
+                // Leave $message as a general failure message; individual errors
+                // are available in the `$errors` array and will be rendered
+                // safely by the view. Avoid appending raw error payloads
+                // into the flash message to prevent exposing JSON to users.
             }
 
             // Preserve posted values
@@ -505,10 +523,25 @@ class ItemController
             if (isset($response['data']['errors'])) {
                 $errorsArray = is_array($response['data']['errors']) ? $response['data']['errors'] : [$response['data']['errors']];
                 $errors = array_map(function ($e) {
-                    return is_array($e) ? ($e['message'] ?? json_encode($e)) : $e;
+                    if (is_array($e)) {
+                        if (!empty($e['message']))
+                            return $e['message'];
+                        if (!empty($e['msg']))
+                            return $e['msg'];
+                        if (!empty($e['path']) && !empty($e['msg'])) {
+                            return ucfirst($e['path']) . ': ' . $e['msg'];
+                        }
+                        if (!empty($e['value']) && !empty($e['msg'])) {
+                            return htmlspecialchars((string) $e['value']) . ': ' . $e['msg'];
+                        }
+                        return 'Invalid input';
+                    }
+                    return (string) $e;
                 }, $errorsArray);
-                if (!empty($errors))
-                    $message .= ': ' . implode(', ', $errors);
+                // Leave $message as a general failure message; individual errors
+                // are available in the `$errors` array and will be rendered
+                // safely by the view. Avoid appending raw error payloads
+                // into the flash message to prevent exposing JSON to users.
             }
 
             // Preserve posted values

@@ -145,7 +145,7 @@
                                             $adminUserDisplay = trim(($item['user_first_name'] ?? $item['first_name'] ?? '') . ' ' . ($item['user_last_name'] ?? $item['last_name'] ?? ''));
                                         }
 
-                                        // Final fallback: show nothing (we'll still display school if present)
+                                        // Final fallback: show nothing (we'll still display school/email if present)
                                         ?>
                                         <?= sanitizeForDisplay($adminUserDisplay) ?>
                                         <?php
@@ -154,13 +154,23 @@
                                         if (!empty($userSchool)): ?>
                                             <br><small class="text-muted"><?= htmlspecialchars($userSchool) ?></small>
                                         <?php endif; ?>
+                                        <?php
+                                        // Show reporter/finder email when present (from item or nested user)
+                                        $userEmail = $item['email'] ?? $item['user']['email'] ?? $item['found_by_email'] ?? $item['reporter_email'] ?? null;
+                                        if (!empty($userEmail)): ?>
+                                            <br><small class="text-muted"><?= htmlspecialchars($userEmail) ?></small>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="small">
                                         <?php
                                         // Category fallbacks: nested category object or flattened fields
                                         $catName = $item['category']['name'] ?? $item['category_name'] ?? $item['categoryName'] ?? $item['category_title'] ?? null;
                                         echo htmlspecialchars($catName ?? '');
-                                        ?>
+                                        // Show location name when available from API (found/admin listing may provide location_name)
+                                        $locName = $item['location_name'] ?? $item['found_location_name'] ?? $item['found_location'] ?? $item['location']['name'] ?? null;
+                                        if (!empty($locName)): ?>
+                                            <br><small class="text-muted"><?= htmlspecialchars($locName) ?></small>
+                                        <?php endif; ?>
                                     </td>
                                     <td><span
                                             class="badge <?= getStatusBadgeClass($item['status'] ?? 'pending') ?>"><?= ucfirst($item['status'] ?? 'pending') ?></span>

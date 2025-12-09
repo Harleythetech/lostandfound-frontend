@@ -105,14 +105,24 @@
                             <div class="col-6">
                                 <i class="bi bi-tag text-primary me-2"></i>
                                 <span class="text-muted">Category:</span>
-                                <span
-                                    class="d-block fw-medium"><?= htmlspecialchars($item['category']['name'] ?? $item['category'] ?? 'N/A') ?></span>
+                                <span class="d-block fw-medium">
+                                    <?=
+                                        htmlspecialchars(
+                                            $item['category']['name'] ?? $item['category_name'] ?? $item['category'] ?? $item['categoryTitle'] ?? ''
+                                        )
+                                        ?>
+                                </span>
                             </div>
                             <div class="col-6">
                                 <i class="bi bi-geo-alt text-success me-2"></i>
                                 <span class="text-muted">Location:</span>
-                                <span
-                                    class="d-block fw-medium"><?= htmlspecialchars($item['location']['name'] ?? $item['found_location'] ?? 'N/A') ?></span>
+                                <span class="d-block fw-medium">
+                                    <?=
+                                        htmlspecialchars(
+                                            $item['location_name'] ?? $item['found_location_name'] ?? $item['found_location'] ?? $item['location']['name'] ?? ''
+                                        )
+                                        ?>
+                                </span>
                             </div>
                             <div class="col-6">
                                 <i class="bi bi-calendar text-success me-2"></i>
@@ -126,6 +136,14 @@
                                 <span class="d-block fw-medium"><?= formatDate($item['created_at']) ?></span>
                             </div>
                         </div>
+
+                        <?php
+                        // Additional fields will be rendered below the main row as a separate card.
+                        $storageLocation = $item['storage_location_name'] ?? $item['storage_location'] ?? $item['storage_location_id'] ?? null;
+                        $storageNotes = $item['storage_notes'] ?? $item['storage_note'] ?? null;
+                        $uniqueIds = $item['unique_identifiers'] ?? $item['unique_identification'] ?? $item['distinctive_features'] ?? null;
+                        $conditionNotes = $item['condition_notes'] ?? $item['conditionNotes'] ?? null;
+                        ?>
 
                         <hr>
 
@@ -193,6 +211,46 @@
                 </div>
             </div>
         </div>
+
+        <?php if (!empty($storageLocation) || !empty($storageNotes) || !empty($uniqueIds) || !empty($conditionNotes)): ?>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold mb-3"><i
+                                    class="bi bi-archive-fill text-primary me-2"></i>Additional Info</h6>
+                            <div class="row g-3 small">
+                                <?php if (!empty($storageLocation)): ?>
+                                    <div class="col-md-6">
+                                        <small class="text-muted d-block">Storage Location</small>
+                                        <span class="fw-medium"><?= htmlspecialchars($storageLocation) ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($storageNotes)): ?>
+                                    <div class="col-md-6">
+                                        <small class="text-muted d-block">Storage Notes</small>
+                                        <span class="fw-medium"><?= nl2br(sanitizeForDisplay($storageNotes)) ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($uniqueIds)): ?>
+                                    <div class="col-12">
+                                        <small class="text-muted d-block">Distinctive / Unique Identifiers</small>
+                                        <div class="fw-medium"><?= nl2br(sanitizeForDisplay($uniqueIds)) ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($conditionNotes)): ?>
+                                    <div class="col-12">
+                                        <small class="text-muted d-block">Condition Notes</small>
+                                        <div class="fw-medium"><?= nl2br(sanitizeForDisplay($conditionNotes)) ?></div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php endif; ?>
 
         <!-- Potential Matches -->
         <?php if (!empty($matches)): ?>
