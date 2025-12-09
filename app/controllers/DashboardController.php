@@ -12,6 +12,16 @@ class DashboardController
         $response = apiRequest('/dashboard', 'GET', null, getToken());
         $dashboard = $response['data']['data'] ?? $response['data'] ?? [];
 
+        // If API returned top-level stats (lost_items / found_items / claims / notifications), prefer them
+        if (isset($dashboard['lost_items']) || isset($dashboard['found_items']) || isset($dashboard['claims']) || isset($dashboard['notifications'])) {
+            // Normalize API top-level stats into a `stats` array expected by views
+            if (!isset($dashboard['stats']) || !is_array($dashboard['stats'])) {
+                $dashboard['stats'] = $dashboard;
+            }
+            // Keep `matches` in stats — frontend has custom logic but may still
+            // rely on API-provided matches in some contexts. Do not remove it here.
+        }
+
         // Get search/filter parameters
         $search = $_GET['search'] ?? '';
         $category = $_GET['category'] ?? '';
@@ -36,6 +46,37 @@ class DashboardController
         $foundResponse = apiRequest('/found-items?' . implode('&', $queryParams), 'GET', null, getToken());
         $foundData = $foundResponse['data']['data'] ?? $foundResponse['data'] ?? [];
         $foundItems = $foundData['items'] ?? $foundData ?? [];
+
+        // Ensure dashboard stats include counts for lost/found items when API doesn't provide them
+        try {
+            if (!isset($dashboard['stats']) || !is_array($dashboard['stats'])) {
+                $dashboard['stats'] = [];
+            }
+
+            // Prefer pagination totals if available
+            $lostCount = 0;
+            if (isset($lostData['pagination']['total'])) {
+                $lostCount = (int) $lostData['pagination']['total'];
+            } elseif (isset($lostData['total'])) {
+                $lostCount = (int) $lostData['total'];
+            } elseif (is_array($lostItems)) {
+                $lostCount = count($lostItems);
+            }
+
+            $foundCount = 0;
+            if (isset($foundData['pagination']['total'])) {
+                $foundCount = (int) $foundData['pagination']['total'];
+            } elseif (isset($foundData['total'])) {
+                $foundCount = (int) $foundData['total'];
+            } elseif (is_array($foundItems)) {
+                $foundCount = count($foundItems);
+            }
+
+            $dashboard['stats']['lost_items'] = $dashboard['stats']['lost_items'] ?? $lostCount;
+            $dashboard['stats']['found_items'] = $dashboard['stats']['found_items'] ?? $foundCount;
+        } catch (Exception $e) {
+            // ignore and let view fall back to zero
+        }
 
 
 
@@ -95,6 +136,35 @@ class DashboardController
             $matchesCount = is_array($filtered) ? count($filtered) : 0;
         } catch (Exception $e) {
             $matchesCount = null;
+        }
+
+        // --- Ensure we have a claims count for the dashboard stats
+        try {
+            // Only fetch if backend didn't already provide it
+            $providedClaims = $dashboard['stats']['my_claims'] ?? $dashboard['my_claims'] ?? null;
+            if (empty($providedClaims)) {
+                $claimsResp = apiRequest('/dashboard/my-claims?page=1&limit=1', 'GET', null, getToken());
+                $claimsData = $claimsResp['data'] ?? $claimsResp;
+                // Look for pagination total or data count
+                $count = 0;
+                if (isset($claimsData['pagination']['total'])) {
+                    $count = (int) $claimsData['pagination']['total'];
+                } elseif (isset($claimsData['total'])) {
+                    $count = (int) $claimsData['total'];
+                } elseif (is_array($claimsData)) {
+                    // If endpoint returned a list directly
+                    $list = $claimsResp['data']['data'] ?? $claimsResp['data'] ?? null;
+                    if (is_array($list)) {
+                        $count = count($list);
+                    }
+                }
+                // Normalize into dashboard stats structure expected by the view
+                if (!isset($dashboard['stats']) || !is_array($dashboard['stats']))
+                    $dashboard['stats'] = [];
+                $dashboard['stats']['my_claims'] = $count;
+            }
+        } catch (Exception $e) {
+            // ignore and let view fall back to zero
         }
 
         include __DIR__ . '/../../views/dashboard/index.php';

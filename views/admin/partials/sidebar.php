@@ -64,7 +64,7 @@ $currentPath = $_GET['url'] ?? '';
     <!-- Brand/Logo -->
     <a href="<?= APP_URL ?>/admin" class="sidebar-brand">
         <span>Lost & Found</span>
-        <small class="sidebar-brand-sub">Admin Panel | V5.0.0</small>
+        <small class="sidebar-brand-sub">Admin Panel | V6.0.0</small>
     </a>
 
     <!-- Navigation -->

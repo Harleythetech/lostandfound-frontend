@@ -9,7 +9,7 @@ $isMyStuffActive = strpos($currentPath, 'dashboard/my-') !== false;
     <!-- Brand/Logo -->
     <a href="<?= APP_URL ?>/" class="sidebar-brand">
         <span>Lost & Found</span>
-        <small class="sidebar-brand-sub">TSD-CREA.BUILD | V5.0.0</small>
+        <small class="sidebar-brand-sub">TSD-CREA.BUILD | V6.0.0</small>
     </a>
 
     <!-- Navigation -->

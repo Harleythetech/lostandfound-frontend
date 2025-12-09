@@ -105,7 +105,8 @@
                             <div class="alert alert-success py-2">
                                 <i class="bi bi-calendar-check me-1"></i><strong>Pickup Scheduled</strong><br>
                                 <strong>Date:</strong>
-                                <?= date('F d, Y \a\t g:i A', strtotime($claim['pickup_scheduled'])) ?>
+                                <span class="local-time" data-datetime="<?= htmlspecialchars($claim['pickup_scheduled']) ?>"
+                                    data-format="datetime"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'F d, Y \\a\\t g:i A')) ?></span>
                                 <?php if (!empty($claim['storage_location'])): ?><br><strong>Location:</strong>
                                     <?= htmlspecialchars($claim['storage_location']) ?>     <?php endif; ?>
                             </div>
@@ -163,10 +164,10 @@
                         <!-- Timestamps -->
                         <div class="text-muted small">
                             <i class="bi bi-clock me-1"></i>Submitted
-                            <?= date('M d, Y g:i A', strtotime($claim['created_at'])) ?>
+                            <?= formatDate($claim['created_at'], 'M d, Y g:i A') ?>
                             <?php if (!empty($claim['verified_at'])): ?>
                                 <br><i class="bi bi-check-circle me-1"></i>Approved
-                                <?= date('M d, Y g:i A', strtotime($claim['verified_at'])) ?>
+                                <?= formatDate($claim['verified_at'], 'M d, Y g:i A') ?>
                                 <?php if (!empty($claim['verifier_name'])): ?>
                                     by <?= htmlspecialchars($claim['verifier_name']) ?>
                                 <?php endif; ?>

@@ -278,7 +278,18 @@ function formatDate($date, $format = 'M d, Y')
 {
     if (empty($date))
         return 'N/A';
-    return date($format, strtotime($date));
+    // Prefer parsing with DateTime to preserve timezone information when
+    // an ISO datetime contains an offset (e.g. 2025-12-10T17:00:00-07:00).
+    // Using strtotime() then date() converts to server timezone which can
+    // shift the displayed wall-clock time. DateTime preserves the original
+    // timezone stored in the string so formatting will show the intended
+    // local time provided by the API.
+    try {
+        $dt = new DateTime($date);
+        return $dt->format($format);
+    } catch (Exception $e) {
+        return date($format, strtotime($date));
+    }
 }
 
 // Decode any HTML entities stored in data (e.g., &amp;#x27;) then escape for safe output

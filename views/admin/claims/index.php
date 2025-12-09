@@ -130,7 +130,8 @@
                                             <?php endif; ?>
                                             <div>
                                                 <div class="fw-semibold small">
-                                                    <?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?></div>
+                                                    <?= htmlspecialchars($claim['item_title'] ?? 'Unknown Item') ?>
+                                                </div>
                                                 <small class="text-muted">ID:
                                                     #<?= $claim['item_id'] ?? $claim['found_item_id'] ?? 'N/A' ?></small>
                                             </div>
@@ -167,7 +168,9 @@
                                         <?php if (!empty($claim['pickup_scheduled'])): ?>
                                             <small class="d-block">
                                                 <i class="bi bi-calendar-check text-success me-1"></i>
-                                                <?= formatDate($claim['pickup_scheduled'], 'M j, g:i A') ?>
+                                                <span class="local-time"
+                                                    data-datetime="<?= htmlspecialchars($claim['pickup_scheduled']) ?>"
+                                                    data-format="datetime"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'M j, g:i A')) ?></span>
                                             </small>
                                         <?php elseif ($claim['status'] === 'approved'): ?>
                                             <span class="badge bg-warning text-dark">

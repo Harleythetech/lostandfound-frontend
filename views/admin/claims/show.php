@@ -379,8 +379,12 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                 <div class="display-6 text-success mb-2">
                                     <i class="bi bi-calendar-event"></i>
                                 </div>
-                                <strong class="d-block"><?= formatDate($claim['pickup_scheduled'], 'l, F j, Y') ?></strong>
-                                <span class="text-muted"><?= formatDate($claim['pickup_scheduled'], 'g:i A') ?></span>
+                                <strong class="d-block"><span class="local-time"
+                                        data-datetime="<?= htmlspecialchars($claim['pickup_scheduled'] ?? '') ?>"
+                                        data-format="date-long"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'l, F j, Y')) ?></span></strong>
+                                <span class="text-muted"><span class="local-time"
+                                        data-datetime="<?= htmlspecialchars($claim['pickup_scheduled'] ?? '') ?>"
+                                        data-format="time"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'g:i A')) ?></span></span>
                             </div>
                             <hr>
                             <div class="small">
@@ -444,6 +448,7 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                     <label class="form-label small">Pickup Time</label>
                                     <input type="time" name="pickup_time" class="form-control" value="10:00">
                                 </div>
+                                <input type="hidden" name="pickup_scheduled" value="">
                                 <button type="submit" class="btn btn-success w-100">
                                     <i class="bi bi-check-lg me-2"></i>Approve Claim
                                 </button>
@@ -483,7 +488,8 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                             </h6>
                         </div>
                         <div class="card-body">
-                            <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/schedule" method="POST">
+                            <form action="<?= APP_URL ?>/admin/claims/<?= $claim['id'] ?>/schedule" method="POST"
+                                id="scheduleForm">
                                 <div class="mb-3">
                                     <label class="form-label small">Pickup Date</label>
                                     <input type="date" name="pickup_date" class="form-control" min="<?= date('Y-m-d') ?>"
@@ -493,6 +499,7 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
                                     <label class="form-label small">Pickup Time</label>
                                     <input type="time" name="pickup_time" class="form-control" value="10:00" required>
                                 </div>
+                                <input type="hidden" name="pickup_scheduled" value="">
                                 <button type="submit" class="btn btn-primary w-100">
                                     <i
                                         class="bi bi-calendar-check me-2"></i><?= !empty($claim['pickup_scheduled']) ? 'Reschedule' : 'Schedule' ?>
@@ -583,3 +590,33 @@ $storageLocation = $claim['storage_location'] ?? 'Security Office';
 </div>
 
 <?php include __DIR__ . '/../../layouts/footer-dashboard.php'; ?>
+<script>
+    // Build a naive ISO datetime string without timezone offset: YYYY-MM-DDTHH:MM:00
+    // Many backends expect naive local datetimes; sending the local date/time
+    // preserves the user's intended wall-clock time when the server stores/displays it.
+    function buildZonedDatetime(dateStr, timeStr) {
+        if (!dateStr || !timeStr) return '';
+        return dateStr + 'T' + timeStr + ':00';
+    }
+
+    // Populate hidden pickup_scheduled before submitting approve/schedule forms
+    document.addEventListener('DOMContentLoaded', function () {
+        // Targets: forms that include pickup_date/pickup_time inputs under this view
+        const forms = document.querySelectorAll('form[action$="/approve"], form[action$="/schedule"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                try {
+                    const dateInput = form.querySelector('input[name="pickup_date"]');
+                    const timeInput = form.querySelector('input[name="pickup_time"]');
+                    const hidden = form.querySelector('input[name="pickup_scheduled"]');
+                    if (dateInput && timeInput && hidden) {
+                        const val = buildZonedDatetime(dateInput.value, timeInput.value);
+                        hidden.value = val;
+                    }
+                } catch (err) {
+                    // on error, allow form to submit normally (server will fallback to naive construction)
+                }
+            });
+        });
+    });
+</script>

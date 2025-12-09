@@ -178,7 +178,7 @@
                                             <i
                                                 class="bi bi-tag me-1"></i><?= htmlspecialchars($claim['category_name'] ?? 'Uncategorized') ?>
                                             <span class="mx-2">•</span>
-                                            Claimed on <?= date('M d, Y', strtotime($claim['created_at'])) ?>
+                                            Claimed on <?= formatDate($claim['created_at'], 'M d, Y') ?>
                                         </p>
                                         <p class="small mb-0 text-truncate-2">
                                             <?= htmlspecialchars($claim['description'] ?? '') ?>
@@ -200,7 +200,9 @@
                                         <?php if (!empty($claim['pickup_scheduled'])): ?>
                                             <div class="small text-muted mt-1">
                                                 <i class="bi bi-calendar-event"></i>
-                                                <?= date('M d, Y', strtotime($claim['pickup_scheduled'])) ?>
+                                                <span class="local-time"
+                                                    data-datetime="<?= htmlspecialchars($claim['pickup_scheduled']) ?>"
+                                                    data-format="date-short"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'M d, Y')) ?></span>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -228,7 +230,9 @@
                                 <?php if ($claimStatus === 'approved' && !empty($claim['pickup_scheduled'])): ?>
                                     <div class="alert alert-success mt-3 mb-0 py-2">
                                         <i class="bi bi-calendar-check me-1"></i>
-                                        Pickup scheduled for <?= date('F d, Y \a\t g:i A', strtotime($claim['pickup_scheduled'])) ?>
+                                        Pickup scheduled for <span class="local-time"
+                                            data-datetime="<?= htmlspecialchars($claim['pickup_scheduled']) ?>"
+                                            data-format="datetime"><?= htmlspecialchars(formatDate($claim['pickup_scheduled'], 'F d, Y \\a\\t g:i A')) ?></span>
                                         <?php if (!empty($claim['storage_location'])): ?>
                                             at <strong><?= htmlspecialchars($claim['storage_location']) ?></strong>
                                         <?php endif; ?>
@@ -240,7 +244,7 @@
                                         <i class="bi bi-check-circle me-1"></i>
                                         Item successfully retrieved
                                         <?php if (!empty($claim['picked_up_at'])): ?>
-                                            on <?= date('F d, Y', strtotime($claim['picked_up_at'])) ?>
+                                            on <?= formatDate($claim['picked_up_at'], 'F d, Y') ?>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
