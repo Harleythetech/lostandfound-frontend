@@ -37,9 +37,28 @@
                             <option value="">All Actions</option>
                             <option value="login" <?= ($action ?? '') === 'login' ? 'selected' : '' ?>>Login</option>
                             <option value="logout" <?= ($action ?? '') === 'logout' ? 'selected' : '' ?>>Logout</option>
+                            <option value="register" <?= ($action ?? '') === 'register' ? 'selected' : '' ?>>Register
+                            </option>
+                            <option value="approve_user" <?= ($action ?? '') === 'approve_user' ? 'selected' : '' ?>>
+                                Approve User</option>
+                            <option value="decline_user" <?= ($action ?? '') === 'decline_user' ? 'selected' : '' ?>>
+                                Decline User</option>
+                            <option value="suspend_user" <?= ($action ?? '') === 'suspend_user' ? 'selected' : '' ?>>
+                                Suspend User</option>
+                            <option value="unsuspend_user" <?= ($action ?? '') === 'unsuspend_user' ? 'selected' : '' ?>>
+                                Unsuspend User</option>
                             <option value="create" <?= ($action ?? '') === 'create' ? 'selected' : '' ?>>Create</option>
+                            <option value="create_found_item" <?= ($action ?? '') === 'create_found_item' ? 'selected' : '' ?>>Create Found Item</option>
+                            <option value="create_lost_item" <?= ($action ?? '') === 'create_lost_item' ? 'selected' : '' ?>>Create Lost Item</option>
                             <option value="update" <?= ($action ?? '') === 'update' ? 'selected' : '' ?>>Update</option>
+                            <option value="update_found_item" <?= ($action ?? '') === 'update_found_item' ? 'selected' : '' ?>>Update Found Item</option>
+                            <option value="update_lost_item" <?= ($action ?? '') === 'update_lost_item' ? 'selected' : '' ?>>Update Lost Item</option>
+                            <option value="approve" <?= ($action ?? '') === 'approve' ? 'selected' : '' ?>>Approve</option>
+                            <option value="review_found_item" <?= ($action ?? '') === 'review_found_item' ? 'selected' : '' ?>>Review Found Item</option>
+                            <option value="pickup" <?= ($action ?? '') === 'pickup' ? 'selected' : '' ?>>Pickup</option>
                             <option value="delete" <?= ($action ?? '') === 'delete' ? 'selected' : '' ?>>Delete</option>
+                            <option value="delete_found_item" <?= ($action ?? '') === 'delete_found_item' ? 'selected' : '' ?>>Delete Found Item</option>
+                            <option value="delete_lost_item" <?= ($action ?? '') === 'delete_lost_item' ? 'selected' : '' ?>>Delete Lost Item</option>
                         </select>
                     </div>
                     <div class="col-md-4">
@@ -127,6 +146,8 @@ function getActionBadgeColor($action)
         'approve' => 'success',
         'reject' => 'warning'
     ];
+    // treat unsuspend_user action as success
+    $colors['unsuspend_user'] = 'success';
     return $colors[$action] ?? 'secondary';
 }
 ?>

@@ -574,28 +574,48 @@ class AdminController
         $limit = $_GET['limit'] ?? 50;
 
         $queryParams = ["limit={$limit}"];
-        if ($action)
+        // Don't pass generic action filters to the API (e.g. 'create','update','delete')
+        // because the API may record more specific action names like 'delete_lost_item'.
+        // For those generic filters we will fetch unfiltered and do substring matching
+        // client-side below.
+        $genericActions = ['create', 'update', 'delete'];
+        if ($action && !in_array($action, $genericActions)) {
             $queryParams[] = "action=" . urlencode($action);
+        }
         if ($userId)
             $queryParams[] = "user_id=" . urlencode($userId);
 
         $response = apiRequest('/admin/activity?' . implode('&', $queryParams), 'GET', null, getToken());
         $logs = $response['data']['data'] ?? [];
 
+        // Normalize action filtering: API records specific action names
+        // (e.g. `delete_lost_item`, `delete_found_item`). Map generic UI
+        // filters to those specific names and perform substring matching
+        // client-side so the admin sees the expected results.
+        if (!empty($action)) {
+            $actionMap = [
+                'delete' => ['delete_found_item', 'delete_lost_item', 'delete'],
+                'create' => ['create_found_item', 'create_lost_item', 'create', 'register'],
+                'update' => ['update_found_item', 'update_lost_item', 'update']
+            ];
+
+            $matchTerms = $actionMap[$action] ?? [$action];
+
+            $filtered = [];
+            foreach ($logs as $log) {
+                $la = strtolower($log['action'] ?? '');
+                foreach ($matchTerms as $term) {
+                    if ($term !== '' && strpos($la, strtolower($term)) !== false) {
+                        $filtered[] = $log;
+                        break;
+                    }
+                }
+            }
+
+            $logs = $filtered;
+        }
+
         include __DIR__ . '/../../views/admin/activity.php';
-    }
-
-    // ============ CATEGORIES ============
-
-    public function categories()
-    {
-        $this->checkAdmin();
-
-        // Token auth shows all categories including inactive
-        $response = apiRequest('/categories', 'GET', null, getToken());
-        $categories = $response['data']['data'] ?? [];
-
-        include __DIR__ . '/../../views/admin/categories/index.php';
     }
 
     public function storeCategory()

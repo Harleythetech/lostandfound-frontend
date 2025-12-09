@@ -328,6 +328,12 @@ class ItemController
             setFlash('danger', $message);
         }
 
+        // Redirect depending on who deleted the item: admin users should
+        // be returned to the admin listing, regular users to their dashboard.
+        if (isAdmin()) {
+            redirect('/admin/lost-items');
+        }
+
         redirect('/dashboard/my-lost-items');
     }
 
@@ -634,6 +640,10 @@ class ItemController
         } else {
             $message = $response['data']['message'] ?? 'Failed to delete item';
             setFlash('danger', $message);
+        }
+
+        if (isAdmin()) {
+            redirect('/admin/found-items');
         }
 
         redirect('/dashboard/my-found-items');

@@ -30,6 +30,8 @@ if (file_exists($envFile)) {
 // Application Configuration
 define('APP_NAME', 'Lost and Found');
 define('APP_URL', '/lostandfound');  // Base URL for subdirectory installation
+// Application version displayed in sidebars and about areas
+define('APP_VERSION', 'V6.0.1');
 define('API_BASE_URL', 'https://thms-v2.hopto.org/api');
 
 // Firebase Configuration (loaded from environment variables or .env file)
